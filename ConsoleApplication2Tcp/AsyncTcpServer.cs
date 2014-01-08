@@ -14,7 +14,6 @@ namespace ConsoleApplication2Tcp
     {
         private TcpListenerStateObject _server;
         private Hashtable _clientList = new Hashtable();
-        private int clientID = 0;
         internal class TcpListenerStateObject
         {
             public TcpListener Listener=null;
@@ -56,26 +55,30 @@ namespace ConsoleApplication2Tcp
         private void DealTheClient(object state)
         {
             var client = (TcpClient) state;
-            GCHandle clientGcHandle = GCHandle.Alloc(client, GCHandleType.Normal);
+            //GCHandle clientGcHandle = GCHandle.Alloc(client, GCHandleType.Normal);
 
             //Get the client ip address
             //string clientID = AddressOf(clientGcHandle);
-            clientID++;
+            string clientID = Guid.NewGuid().ToString();
+
             string clientIPAddress = IPAddress.Parse(((
                 IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()).ToString();
             int clientPort = ((IPEndPoint)client.Client.RemoteEndPoint).Port;
 
-            _clientList.Add(clientID,new Client(clientID.ToString(),clientIPAddress,clientPort));
+            _clientList.Add(clientID,new Client(clientID,clientIPAddress,clientPort));
 
             Console.WriteLine(clientID + ":" + clientIPAddress + ":" + clientPort);
             Console.WriteLine("conneted client number:"+_clientList.Count);
             _server.NetworkStream = client.GetStream();
-            #region GC
-            clientGcHandle.Free();
-            _clientList.Remove(clientID);
-            clientID--;
-
-            #endregion
+            if (false)
+            {
+                #region GC
+                //clientGcHandle.Free();
+                _clientList.Remove(clientID);
+                client.Close();
+                #endregion
+            }
+            
         }
 
         private string AddressOf(GCHandle handle)
