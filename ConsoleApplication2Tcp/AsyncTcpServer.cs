@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,10 +13,26 @@ namespace ConsoleApplication2Tcp
     class AsyncTcpServer
     {
         private TcpListenerStateObject _server;
+        private Hashtable _clientList = new Hashtable();
+        private int clientID = 0;
         internal class TcpListenerStateObject
         {
             public TcpListener Listener=null;
             public NetworkStream NetworkStream = null;
+        }
+        internal class Client
+        {
+            private string _id;
+            private string _ip;
+            private int _port;
+
+            public Client(string id, string ip, int port)
+            {
+                _id = id;
+                _ip = ip;
+                _port = port;
+            }
+
         }
         public AsyncTcpServer(string ipAddress, string port)
         {
@@ -42,13 +59,22 @@ namespace ConsoleApplication2Tcp
             GCHandle clientGcHandle = GCHandle.Alloc(client, GCHandleType.Normal);
 
             //Get the client ip address
-            string clientIPAddress = "Your Ip Address is: " + IPAddress.Parse(((
-            IPEndPoint)client.Client.RemoteEndPoint).Address.ToString());
-            var port = ((IPEndPoint)client.Client.RemoteEndPoint).Port;
-            Console.WriteLine(AddressOf(clientGcHandle) + ":" + clientIPAddress + ":" + port);
+            //string clientID = AddressOf(clientGcHandle);
+            clientID++;
+            string clientIPAddress = IPAddress.Parse(((
+                IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()).ToString();
+            int clientPort = ((IPEndPoint)client.Client.RemoteEndPoint).Port;
 
+            _clientList.Add(clientID,new Client(clientID.ToString(),clientIPAddress,clientPort));
+
+            Console.WriteLine(clientID + ":" + clientIPAddress + ":" + clientPort);
+            Console.WriteLine("conneted client number:"+_clientList.Count);
+            _server.NetworkStream = client.GetStream();
             #region GC
             clientGcHandle.Free();
+            _clientList.Remove(clientID);
+            clientID--;
+
             #endregion
         }
 
