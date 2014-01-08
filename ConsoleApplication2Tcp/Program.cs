@@ -16,13 +16,14 @@ namespace ConsoleApplication2Tcp
             new ManualResetEvent(false);
         static void Main(string[] args)
         {
-            string test = "你是誰";
-            Console.WriteLine(Encoding.Default.HeaderName);
-            Console.WriteLine(Encoding.UTF8.GetByteCount(test));
-            Console.WriteLine(Encoding.ASCII.GetByteCount(test));
-            Connect();
-            AsyncTcpClient a = new AsyncTcpClient("", 0, "us-ascii");
-            while (true)
+            AsyncTcpServer test = new AsyncTcpServer("192.168.56.1", "12345");
+            //string test = "你是誰";
+            //Console.WriteLine(Encoding.Default.HeaderName);
+            //Console.WriteLine(Encoding.UTF8.GetByteCount(test));
+            //Console.WriteLine(Encoding.ASCII.GetByteCount(test));
+            //Connect();
+            //AsyncTcpClient a = new AsyncTcpClient("", 0, "us-ascii");
+            while (false)
             {
                 write();
                 read(); 
