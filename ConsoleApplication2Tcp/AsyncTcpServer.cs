@@ -39,23 +39,24 @@ namespace ConsoleApplication2Tcp
         private void DealTheClient(object state)
         {
             var client = (TcpClient) state;
-            GCHandle cliGcHandle = GCHandle.Alloc(client, GCHandleType.Normal);
+            GCHandle clientGcHandle = GCHandle.Alloc(client, GCHandleType.Normal);
 
             //Get the client ip address
-string clientIPAddress = "Your Ip Address is: " + IPAddress.Parse(((
-    IPEndPoint)client.Client.RemoteEndPoint).Address.ToString());
-var port = ((IPEndPoint)client.Client.RemoteEndPoint).Port;
-Console.WriteLine(AddressOf(cliGcHandle) + ":" + clientIPAddress+":"+port);
+            string clientIPAddress = "Your Ip Address is: " + IPAddress.Parse(((
+            IPEndPoint)client.Client.RemoteEndPoint).Address.ToString());
+            var port = ((IPEndPoint)client.Client.RemoteEndPoint).Port;
+            Console.WriteLine(AddressOf(clientGcHandle) + ":" + clientIPAddress + ":" + port);
+
+            #region GC
+            clientGcHandle.Free();
+            #endregion
         }
+
         private string AddressOf(GCHandle handle)
         {
             IntPtr pointer = GCHandle.ToIntPtr(handle);
             return "0x" + pointer.ToString("X");
         }
 
-        private void ReleaseGcHandle(GCHandle a)
-        {
-            a.Free();
-        }
     }
 }
