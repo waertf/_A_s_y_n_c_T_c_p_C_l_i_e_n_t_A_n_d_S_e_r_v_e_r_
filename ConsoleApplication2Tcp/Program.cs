@@ -16,7 +16,10 @@ namespace ConsoleApplication2Tcp
             new ManualResetEvent(false);
         static void Main(string[] args)
         {
-            AsyncTcpServer test = new AsyncTcpServer("192.168.56.1", "12345");
+           // AsyncTcpServer test = new AsyncTcpServer("192.168.56.1", "12345");
+            AsyncTcpClient test = new AsyncTcpClient("192.168.56.101",12345,"us-ascii");
+            byte[] a = new byte[]{07,00,00,00};
+            test.WriteBytes(a);
             //string test = "你是誰";
             //Console.WriteLine(Encoding.Default.HeaderName);
             //Console.WriteLine(Encoding.UTF8.GetByteCount(test));
