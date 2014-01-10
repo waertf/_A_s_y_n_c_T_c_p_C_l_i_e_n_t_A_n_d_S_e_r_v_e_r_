@@ -45,8 +45,9 @@ namespace ConsoleApplication2Tcp
         public AsyncTcpClient( string ip, int port,string encoding)
         {
             Encoding = encoding;
-            var client = new TcpClient();
-            var tcpStateObject = new TcpClientStateObject(client, ip, port);
+            //var client = new TcpClient();
+            var tcpStateObject = new TcpClientStateObject(new TcpClient(), ip, port);
+            _tcpStateObject = tcpStateObject;
             Connect(tcpStateObject);
         }
 
@@ -94,7 +95,7 @@ namespace ConsoleApplication2Tcp
 
         private void ReadByDelimiterCallBack(IAsyncResult ar)
         {
-            TcpClientStateObject t = (TcpClientStateObject)ar;
+            TcpClientStateObject t = (TcpClientStateObject)ar.AsyncState;
             try
             {
                 int numberOfBytesRead = t.NetworkStream.EndRead(ar);
@@ -184,7 +185,7 @@ namespace ConsoleApplication2Tcp
 
         private void ReadByLengthPrefixCallBack(IAsyncResult ar)
         {
-            TcpClientStateObject t = (TcpClientStateObject)ar;
+            TcpClientStateObject t = (TcpClientStateObject)ar.AsyncState;
             try
             {
                 int numberOfBytesRead = t.NetworkStream.EndRead(ar);
@@ -219,7 +220,7 @@ namespace ConsoleApplication2Tcp
 
         private void ReadDataCallBack(IAsyncResult ar)
         {
-            TcpClientStateObject t = (TcpClientStateObject)ar;
+            TcpClientStateObject t = (TcpClientStateObject)ar.AsyncState;
             try
             {
                 int numberOfBytesRead = t.NetworkStream.EndRead(ar);
@@ -260,7 +261,7 @@ namespace ConsoleApplication2Tcp
             }
         }
 
-        public void Connect(TcpClientStateObject tcpStateObject)
+        private void Connect(TcpClientStateObject tcpStateObject)
         {
             try
             {
@@ -281,7 +282,7 @@ namespace ConsoleApplication2Tcp
 
         private void ConnectCallBack(IAsyncResult ar)
         {
-            TcpClientStateObject t = (TcpClientStateObject) ar;
+            TcpClientStateObject t = (TcpClientStateObject) ar.AsyncState;
             try
             {
                 if (t.Client != null)
@@ -356,7 +357,7 @@ namespace ConsoleApplication2Tcp
 
         private void WriteStringCallBack(IAsyncResult ar)
         {
-            TcpClientStateObject t = (TcpClientStateObject)ar;
+            TcpClientStateObject t = (TcpClientStateObject)ar.AsyncState;
             try
             {
                 t.NetworkStream.EndWrite(ar);
@@ -436,7 +437,7 @@ namespace ConsoleApplication2Tcp
 
         private void WriteBytesCallBack(IAsyncResult ar)
         {
-            TcpClientStateObject t = (TcpClientStateObject)ar;
+            TcpClientStateObject t = (TcpClientStateObject)ar.AsyncState;
             try
             {
                 t.NetworkStream.EndWrite(ar);
