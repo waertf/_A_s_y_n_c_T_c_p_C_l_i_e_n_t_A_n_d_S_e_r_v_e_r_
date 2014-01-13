@@ -517,5 +517,14 @@ namespace ConsoleApplication2Tcp
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
         }
+        public byte[] ByteCountLittleEndian(int a)
+        {
+            return BitConverter.GetBytes(a);
+        }
+        public byte[] ByteCountBigEndian(int a)
+        {
+            byte[] b = BitConverter.GetBytes(a);
+            return b.Reverse().ToArray();
+        }
     }
 }
