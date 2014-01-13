@@ -6,8 +6,10 @@ using keeplive;
 using System.Net.Sockets;
 using System.Threading;
 
+
 namespace ConsoleApplication2Tcp
 {
+    
     class Program
     {
         static TcpClient t = null;
@@ -20,6 +22,7 @@ namespace ConsoleApplication2Tcp
         {
            // AsyncTcpServer test = new AsyncTcpServer("192.168.56.1", "12345");
             //AsyncTcpClient test = new AsyncTcpClient("192.168.56.101",12345,"us-ascii");
+            byte[] xxx=SendLocBackToWeb("S2446.5281W01234.5678");
             byte[] a = new byte[]{07,00,00,00};
             byte[] b = ByteCountLittleEndian(10);//Little Endian
             byte[] c = ByteCountBigEndian(10);//Big Endian
@@ -33,6 +36,7 @@ namespace ConsoleApplication2Tcp
                 byte[] d = m.ToArray();
 
             }
+
             //test.WriteBytes(a);
             //string test = "你是誰";
             //Console.WriteLine(Encoding.Default.HeaderName);
@@ -46,6 +50,26 @@ namespace ConsoleApplication2Tcp
                 read(); 
                 Thread.Sleep(7000);
             }
+        }
+        static private float ConvertNmea0183ToUtm(float f)
+        {
+            int i = (int)(f / 100);
+            return (f / 100 - i) * 100 / 60 + i;
+        }
+
+        static public byte[] SendLocBackToWeb(string recev)
+        {
+            char[] delimiterChars = { 'N', 'E', 'S', 'W' };
+            string[] tmp1 = recev.Split(delimiterChars);
+            float lat = ConvertNmea0183ToUtm(float.Parse(tmp1[1]));
+            float lon = ConvertNmea0183ToUtm(float.Parse(tmp1[2]));
+            byte[] latBytes = netduino.BitConverter.GetBytes(lat,netduino.BitConverter.ByteOrder.BigEndian);
+            byte[] lonBytes = netduino.BitConverter.GetBytes(lon,netduino.BitConverter.ByteOrder.BigEndian);
+            var m = new MemoryStream();
+            m.Write(lonBytes, 0, lonBytes.Count());
+            m.Write(latBytes, 0, latBytes.Count());
+            return m.ToArray();
+
         }
 
         static byte[] ByteCountLittleEndian(int a)
