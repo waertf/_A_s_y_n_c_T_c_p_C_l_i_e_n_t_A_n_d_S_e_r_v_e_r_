@@ -20,7 +20,7 @@ namespace ConsoleApplication2Tcp
             new ManualResetEvent(false);
         static void Main(string[] args)
         {
-            AsyncTcpServer test = new AsyncTcpServer("192.168.56.1", "12345");
+            //AsyncTcpServer test = new AsyncTcpServer("192.168.56.1", "12345");
             AsyncTcpServer.Client dsdf = new AsyncTcpServer.Client("1","2",3,new TcpClient());
             //AsyncTcpClient test = new AsyncTcpClient("192.168.56.101",12345,"us-ascii");
             byte[] xxx=SendLocBackToWeb("S2446.5281W01234.5678");
