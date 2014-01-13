@@ -32,6 +32,21 @@ namespace AVLSServer
                 return t6002;
             }
         }
+
+        struct UNITReportPacket
+        {
+            public string ID;
+            public string GPSValid;
+            public string DateTime;
+            public string Loc;
+            public string Speed;
+            public string Dir;
+            public string Temp;
+            public string Status;
+            public string Event;
+            public string Message;
+
+        }
         static void Main(string[] args)
         {
             TcpListener tcpListener7000 = new TcpListener(IPAddress.Parse(ConfigurationManager.AppSettings["ip"]),7000);
@@ -63,6 +78,7 @@ namespace AVLSServer
             using (StreamReader reader = new StreamReader(netStream7000))
             {
                 uint message7000Counter = 0;
+                int idCounter = 0;
                 while (true)
                 {
                     string message = reader.ReadLine();
@@ -78,14 +94,76 @@ namespace AVLSServer
                     string[] stringSeparators = new string[] { ",","%%" };
                     string[] receiveStrings = message.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
                     int counter = 0;
+                    UNITReportPacket recvReportPacket = new UNITReportPacket();
                     foreach (var receiveString in receiveStrings)
                     {
                         
                         Console.WriteLine(counter +":"+receiveString);
+                        switch (counter)
+                        {
+                            case 0:
+                                recvReportPacket.ID = receiveString;
+                                break;
+                            case 1:
+                                recvReportPacket.GPSValid = receiveString;
+                                break;
+                            case 2:
+                                recvReportPacket.DateTime = receiveString;
+                                break;
+                            case 3:
+                                recvReportPacket.Loc = receiveString;
+                                break;
+                            case 4:
+                                recvReportPacket.Speed = receiveString;
+                                break;
+                            case 5:
+                                recvReportPacket.Dir = receiveString;
+                                break;
+                            case 6:
+                                recvReportPacket.Temp = receiveString;
+                                break;
+                            case 7:
+                                recvReportPacket.Status = receiveString;
+                                break;
+                            case 8:
+                                recvReportPacket.Event = receiveString;
+                                break;
+                            case 9:
+                                recvReportPacket.Message = receiveString;
+                                break;
+                        }
                         counter++;
+                    }
+                    using (var m = new MemoryStream())
+                    {
+                        string Head = "$CMD_H#";
+                        string Tail = "$CMD_T#";
+                        
+                        byte[] headBytes = Encoding.ASCII.GetBytes(Head);
+                        byte[] HeadLength = ByteCountBigEndian(headBytes.Count());
+
+                        byte[] Cmd_Type = new byte[]{2} ;
+                        byte[] id = ByteCountBigEndian(idCounter++);
+                        byte[] priority = new byte[]{5};
+                        byte[] Attach_Type = new byte[]{1};
+
+                        #region avlsPackageFromPort7000
+
+                        byte[] uid = Encoding.ASCII.GetBytes(recvReportPacket.ID);
+                        byte[] uidLength = ByteCountBigEndian(uid.Count());
+                        #endregion
+
+                        byte[] tailBytes = Encoding.ASCII.GetBytes(Tail);
+                        byte[] TailLength = ByteCountBigEndian(tailBytes.Count());
+
                     }
                 }
             }
+        }
+        static byte[] ByteCountBigEndian(int a)
+        {
+            byte[] b = BitConverter.GetBytes(a);
+            return b.Reverse().ToArray();
         }
     }
 }
