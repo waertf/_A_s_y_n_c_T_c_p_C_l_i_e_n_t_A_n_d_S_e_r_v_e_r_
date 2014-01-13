@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -53,8 +54,38 @@ namespace AVLSServer
             Client clientState = (Client) state;
             TcpClient client7000 = clientState.getClient7000();
             TcpClient client6002 = clientState.getClient6002();
+            string client7000Address = IPAddress.Parse(((
+                IPEndPoint) client7000.Client.RemoteEndPoint).Address.ToString()).ToString();
+            string client6002Address = IPAddress.Parse(((
+                IPEndPoint)client6002.Client.RemoteEndPoint).Address.ToString()).ToString();
             NetworkStream netStream7000 = client7000.GetStream();
             NetworkStream netStream6002 = client6002.GetStream();
+            using (StreamReader reader = new StreamReader(netStream7000))
+            {
+                uint message7000Counter = 0;
+                while (true)
+                {
+                    string message = reader.ReadLine();
+
+                    if (message == null)
+                    {
+                        Console.WriteLine(client7000Address + " has disconnected");
+                        break;
+                    }
+
+                    message7000Counter++;
+                    Console.WriteLine(client7000Address+String.Format(" >> [{0}] Message received: {1}", message7000Counter, message));
+                    string[] stringSeparators = new string[] { ",","%%" };
+                    string[] receiveStrings = message.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
+                    int counter = 0;
+                    foreach (var receiveString in receiveStrings)
+                    {
+                        
+                        Console.WriteLine(counter +":"+receiveString);
+                        counter++;
+                    }
+                }
+            }
         }
     }
 }
