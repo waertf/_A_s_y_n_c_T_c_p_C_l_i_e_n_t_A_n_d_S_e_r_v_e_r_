@@ -108,7 +108,7 @@ namespace AVLSServer
                                 recvReportPacket.GPSValid = receiveString;
                                 break;
                             case 2:
-                                recvReportPacket.DateTime = receiveString;
+                                recvReportPacket.DateTime = "20"+receiveString;
                                 break;
                             case 3:
                                 recvReportPacket.Loc = receiveString;
@@ -151,6 +151,13 @@ namespace AVLSServer
 
                         byte[] uid = Encoding.ASCII.GetBytes(recvReportPacket.ID);
                         byte[] uidLength = ByteCountBigEndian(uid.Count());
+
+                        byte[] statusBytes = new byte[]{0x0A};
+
+                        DateTime time = DateTime.ParseExact(recvReportPacket.DateTime, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.AssumeUniversal);
+                        long timeLong = time.Ticks/TimeSpan.TicksPerMillisecond;
+                        byte[] timeBytes = BitConverter.GetBytes(timeLong).Reverse().ToArray();
+
                         #endregion
 
                         byte[] tailBytes = Encoding.ASCII.GetBytes(Tail);
