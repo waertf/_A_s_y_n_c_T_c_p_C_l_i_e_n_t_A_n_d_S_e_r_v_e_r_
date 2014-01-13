@@ -166,6 +166,9 @@ namespace AVLSServer
                             case "L"://invalid.
                                 GPSValid = Encoding.ASCII.GetBytes(recvReportPacket.GPSValid);
                                 break;
+                            default:
+                                GPSValid = Encoding.ASCII.GetBytes(recvReportPacket.GPSValid);
+                                break;
                         }
                         byte[] Loc = SendLocBackToWeb(recvReportPacket.Loc);
                         byte[] origin_lo = new byte[]{0x00,0x00,0x00,0x00};
@@ -192,6 +195,38 @@ namespace AVLSServer
                         byte[] option3_Length = ByteCountBigEndian(option3.Count());
 
                         byte[] judegs_length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+
+                        int attachSize = uidLength.Count() +
+                                         uid.Count() +
+                                         statusBytes.Count() +
+                                         timeBytes.Count() +
+                                         GPSValid.Count() +
+                                         Loc.Count() +
+                                         origin_lo.Count() +
+                                         origin_la.Count() +
+                                         judge.Count() +
+                                         speed.Count() +
+                                         course.Count() +
+                                         distance.Count() +
+                                         temperature.Count() +
+                                         voltage.Count() +
+                                         satellites.Count() +
+                                         road_Length.Count() +
+                                         town_Length.Count() +
+                                         city_Length.Count() +
+                                         option0_Length.Count() +
+                                         option0.Count() +
+                                         option1_Length.Count() +
+                                         option1.Count() +
+                                         option2_Length.Count() +
+                                         option2.Count() +
+                                         option3_Length.Count() +
+                                         option3.Count() +
+                                         judegs_length.Count();
+                        byte[] attachSizeBytes = ByteCountBigEndian(attachSize);
+
+
+
 
                         #endregion
 
