@@ -147,7 +147,7 @@ namespace AVLSServer
                         byte[] priority = new byte[]{5};
                         byte[] Attach_Type = new byte[]{1};
 
-                        #region avlsPackageFromPort7000
+                        #region avlsPackageFromPort7000_attach
 
                         byte[] uid = Encoding.ASCII.GetBytes(recvReportPacket.ID);
                         byte[] uidLength = ByteCountBigEndian(uid.Count());
@@ -157,6 +157,41 @@ namespace AVLSServer
                         DateTime time = DateTime.ParseExact(recvReportPacket.DateTime, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.AssumeUniversal);
                         long timeLong = time.Ticks/TimeSpan.TicksPerMillisecond;
                         byte[] timeBytes = BitConverter.GetBytes(timeLong).Reverse().ToArray();
+                        byte[] GPSValid;
+                        switch (recvReportPacket.GPSValid)
+                        {
+                            case "A"://valid.
+                                GPSValid = Encoding.ASCII.GetBytes(recvReportPacket.GPSValid);
+                                break;
+                            case "L"://invalid.
+                                GPSValid = Encoding.ASCII.GetBytes(recvReportPacket.GPSValid);
+                                break;
+                        }
+                        byte[] Loc = SendLocBackToWeb(recvReportPacket.Loc);
+                        byte[] origin_lo = new byte[]{0x00,0x00,0x00,0x00};
+                        byte[] origin_la = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] judge = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] speed = BitConverter.GetBytes(float.Parse(recvReportPacket.Speed)).Reverse().ToArray();
+                        byte[] course = BitConverter.GetBytes(float.Parse(recvReportPacket.Dir)).Reverse().ToArray();
+
+                        byte[] distance = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] temperature = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] voltage = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] satellites = new byte[] { 0x00, 0x00 };
+                        byte[] road_Length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] town_Length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] city_Length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+
+                        byte[] option0 = Encoding.ASCII.GetBytes(recvReportPacket.Temp);
+                        byte[] option0_Length = ByteCountBigEndian(option0.Count());
+                        byte[] option1 = Encoding.ASCII.GetBytes(recvReportPacket.Status);
+                        byte[] option1_Length = ByteCountBigEndian(option1.Count());
+                        byte[] option2 = Encoding.ASCII.GetBytes(recvReportPacket.Event);
+                        byte[] option2_Length = ByteCountBigEndian(option2.Count());
+                        byte[] option3 = Encoding.ASCII.GetBytes(recvReportPacket.Message);
+                        byte[] option3_Length = ByteCountBigEndian(option3.Count());
+
+                        byte[] judegs_length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
 
                         #endregion
 
@@ -171,6 +206,99 @@ namespace AVLSServer
         {
             byte[] b = BitConverter.GetBytes(a);
             return b.Reverse().ToArray();
+        }
+        static float ConvertNmea0183ToUtm(float f)
+        {
+            int i = (int)(f / 100);
+            return (f / 100 - i) * 100 / 60 + i;
+        }
+        static byte[] SendLocBackToWeb(string recev)
+        {
+            char[] delimiterChars = { 'N', 'E', 'S', 'W' };
+            string[] tmp1 = recev.Split(delimiterChars);
+            float lat = ConvertNmea0183ToUtm(float.Parse(tmp1[1]));
+            float lon = ConvertNmea0183ToUtm(float.Parse(tmp1[2]));
+            byte[] latBytes = netduino.BitConverter.GetBytes(lat, netduino.BitConverter.ByteOrder.BigEndian);
+            byte[] lonBytes = netduino.BitConverter.GetBytes(lon, netduino.BitConverter.ByteOrder.BigEndian);
+            var m = new MemoryStream();
+            m.Write(lonBytes, 0, lonBytes.Count());
+            m.Write(latBytes, 0, latBytes.Count());
+            return m.ToArray();
+
+        }
+    }
+}
+namespace netduino
+{
+    public static class BitConverter
+    {
+        public static byte[] GetBytes(uint value)
+        {
+            return new byte[4] { 
+                    (byte)(value & 0xFF), 
+                    (byte)((value >> 8) & 0xFF), 
+                    (byte)((value >> 16) & 0xFF), 
+                    (byte)((value >> 24) & 0xFF) };
+        }
+
+        public static unsafe byte[] GetBytes(float value)
+        {
+            uint val = *((uint*)&value);
+            return GetBytes(val);
+        }
+
+        public static unsafe byte[] GetBytes(float value, ByteOrder order)
+        {
+            byte[] bytes = GetBytes(value);
+            if (order != ByteOrder.LittleEndian)
+            {
+                System.Array.Reverse(bytes);
+            }
+            return bytes;
+        }
+
+        public static uint ToUInt32(byte[] value, int index)
+        {
+            return (uint)(
+                value[0 + index] << 0 |
+                value[1 + index] << 8 |
+                value[2 + index] << 16 |
+                value[3 + index] << 24);
+        }
+
+        public static unsafe float ToSingle(byte[] value, int index)
+        {
+            uint i = ToUInt32(value, index);
+            return *(((float*)&i));
+        }
+
+        public static unsafe float ToSingle(byte[] value, int index, ByteOrder order)
+        {
+            if (order != ByteOrder.LittleEndian)
+            {
+                System.Array.Reverse(value, index, value.Length);
+            }
+            return ToSingle(value, index);
+        }
+
+        public enum ByteOrder
+        {
+            LittleEndian,
+            BigEndian
+        }
+
+        static public bool IsLittleEndian
+        {
+            get
+            {
+                unsafe
+                {
+                    int i = 1;
+                    char* p = (char*)&i;
+
+                    return (p[0] == 1);
+                }
+            }
         }
     }
 }
