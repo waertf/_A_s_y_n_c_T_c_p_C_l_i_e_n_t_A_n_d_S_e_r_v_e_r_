@@ -80,7 +80,15 @@ namespace ConsoleApplication2Tcp
             }
             
         }
-
+        public byte[] ByteCountLittleEndian(int a)
+        {
+            return BitConverter.GetBytes(a);
+        }
+        public byte[] ByteCountBigEndian(int a)
+        {
+            byte[] b = BitConverter.GetBytes(a);
+            return b.Reverse().ToArray();
+        }
         private string AddressOf(GCHandle handle)
         {
             IntPtr pointer = GCHandle.ToIntPtr(handle);
