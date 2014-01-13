@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using keeplive;
 using System.Net.Sockets;
@@ -17,9 +19,21 @@ namespace ConsoleApplication2Tcp
         static void Main(string[] args)
         {
            // AsyncTcpServer test = new AsyncTcpServer("192.168.56.1", "12345");
-            AsyncTcpClient test = new AsyncTcpClient("192.168.56.101",12345,"us-ascii");
+            //AsyncTcpClient test = new AsyncTcpClient("192.168.56.101",12345,"us-ascii");
             byte[] a = new byte[]{07,00,00,00};
-            test.WriteBytes(a);
+            byte[] b = ByteCountLittleEndian(10);//Little Endian
+            byte[] c = ByteCountBigEndian(10);//Big Endian
+            string avlsHead = "$CMD_H#";
+            byte[] head = Encoding.ASCII.GetBytes(avlsHead);
+            byte[] headLength = ByteCountBigEndian(head.Count());
+            using (var m = new MemoryStream())
+            {
+                m.Write(headLength, 0, headLength.Count());
+                m.Write(head,0,head.Count());
+                byte[] d = m.ToArray();
+
+            }
+            //test.WriteBytes(a);
             //string test = "你是誰";
             //Console.WriteLine(Encoding.Default.HeaderName);
             //Console.WriteLine(Encoding.UTF8.GetByteCount(test));
@@ -34,6 +48,34 @@ namespace ConsoleApplication2Tcp
             }
         }
 
+        static byte[] ByteCountLittleEndian(int a)
+        {
+            return BitConverter.GetBytes(a);
+        }
+        static byte[] ByteCountBigEndian(int a)
+        {
+            byte[] b= BitConverter.GetBytes(a);
+            return b.Reverse().ToArray();
+        }
+        static byte[] int_to_hex_little_endian(int length)
+        {
+            var reversedBytes = System.Net.IPAddress.NetworkToHostOrder(length);
+            string hex = reversedBytes.ToString("x");
+            string trimmed = hex.Substring(0, 4);
+            //System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+            //Byte[] bytes = encoding.GetBytes(trimmed);
+            byte[] bytes = StringToByteArray(trimmed);
+            //string str = System.Text.Encoding.ASCII.GetString(bytes);
+            return bytes;
+            //return HexAsciiConvert(trimmed);
+        }
+        static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 4), 16))
+                             .ToArray();
+        }
         private static void read()
         {
             if(myNetworkStream!=null)
