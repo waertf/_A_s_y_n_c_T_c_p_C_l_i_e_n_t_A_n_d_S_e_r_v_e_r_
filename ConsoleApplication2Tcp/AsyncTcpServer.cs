@@ -25,12 +25,34 @@ namespace ConsoleApplication2Tcp
             private string _id;
             private string _ip;
             private int _port;
+            private TcpClient _tcpClient;
 
-            public Client(string id, string ip, int port)
+            public Client(string id, string ip, int port,TcpClient cliet)
             {
                 _id = id;
                 _ip = ip;
                 _port = port;
+                _tcpClient = cliet;
+            }
+
+            public string GetId()
+            {
+                return _id;
+            }
+
+            public string GetIp()
+            {
+                return _ip;
+            }
+
+            public int GetPort()
+            {
+                return _port;
+            }
+
+            public TcpClient GeTcpClient()
+            {
+                return _tcpClient;
             }
 
         }
@@ -66,7 +88,7 @@ namespace ConsoleApplication2Tcp
                 IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()).ToString();
             int clientPort = ((IPEndPoint)client.Client.RemoteEndPoint).Port;
 
-            _clientList.Add(clientID,new Client(clientID,clientIPAddress,clientPort));
+            _clientList.Add(clientID, new Client(clientID, clientIPAddress, clientPort, client));
 
             Console.WriteLine(clientID + ":" + clientIPAddress + ":" + clientPort);
             Console.WriteLine("conneted client number:"+_clientList.Count);
@@ -104,10 +126,10 @@ namespace ConsoleApplication2Tcp
             return (f / 100 - i) * 100 / 60 + i;
         }
 
-        public byte[] SendLocBackToWeb(string recev)
+        public byte[] SendLocBackToWeb(string loc)
         {
             char[] delimiterChars = { 'N','E','S','W'};
-            string[] tmp1 = recev.Split(delimiterChars);
+            string[] tmp1 = loc.Split(delimiterChars);
             float lat = ConvertNmea0183ToUtm(float.Parse(tmp1[1]));
             float lon = ConvertNmea0183ToUtm(float.Parse(tmp1[2]));
             byte[] latBytes = netduino.BitConverter.GetBytes(lat, netduino.BitConverter.ByteOrder.BigEndian);
