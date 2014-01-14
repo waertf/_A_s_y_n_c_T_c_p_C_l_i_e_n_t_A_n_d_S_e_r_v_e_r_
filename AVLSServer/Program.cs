@@ -134,23 +134,25 @@ namespace AVLSServer
                         }
                         counter++;
                     }
+                    byte[] packageSendTo6002;
                     using (var m = new MemoryStream())
                     {
                         string Head = "$CMD_H#";
                         string Tail = "$CMD_T#";
                         
                         byte[] headBytes = Encoding.ASCII.GetBytes(Head);
-                        byte[] HeadLength = ByteCountBigEndian(headBytes.Count());
+                        byte[] HeadLength = ByteCountBigEndian(headBytes.Length);
 
                         byte[] Cmd_Type = new byte[]{2} ;
                         byte[] id = ByteCountBigEndian(idCounter++);
                         byte[] priority = new byte[]{5};
                         byte[] Attach_Type = new byte[]{1};
 
+                        
                         #region avlsPackageFromPort7000_attach
 
                         byte[] uid = Encoding.ASCII.GetBytes(recvReportPacket.ID);
-                        byte[] uidLength = ByteCountBigEndian(uid.Count());
+                        byte[] uidLength = ByteCountBigEndian(uid.Length);
 
                         byte[] statusBytes = new byte[]{0x0A};
 
@@ -186,54 +188,102 @@ namespace AVLSServer
                         byte[] city_Length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
 
                         byte[] option0 = Encoding.ASCII.GetBytes(recvReportPacket.Temp);
-                        byte[] option0_Length = ByteCountBigEndian(option0.Count());
+                        byte[] option0_Length = ByteCountBigEndian(option0.Length);
                         byte[] option1 = Encoding.ASCII.GetBytes(recvReportPacket.Status);
-                        byte[] option1_Length = ByteCountBigEndian(option1.Count());
+                        byte[] option1_Length = ByteCountBigEndian(option1.Length);
                         byte[] option2 = Encoding.ASCII.GetBytes(recvReportPacket.Event);
-                        byte[] option2_Length = ByteCountBigEndian(option2.Count());
+                        byte[] option2_Length = ByteCountBigEndian(option2.Length);
                         byte[] option3 = Encoding.ASCII.GetBytes(recvReportPacket.Message);
-                        byte[] option3_Length = ByteCountBigEndian(option3.Count());
+                        byte[] option3_Length = ByteCountBigEndian(option3.Length);
 
                         byte[] judegs_length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
 
-                        int attachSize = uidLength.Count() +
-                                         uid.Count() +
-                                         statusBytes.Count() +
-                                         timeBytes.Count() +
-                                         GPSValid.Count() +
-                                         Loc.Count() +
-                                         origin_lo.Count() +
-                                         origin_la.Count() +
-                                         judge.Count() +
-                                         speed.Count() +
-                                         course.Count() +
-                                         distance.Count() +
-                                         temperature.Count() +
-                                         voltage.Count() +
-                                         satellites.Count() +
-                                         road_Length.Count() +
-                                         town_Length.Count() +
-                                         city_Length.Count() +
-                                         option0_Length.Count() +
-                                         option0.Count() +
-                                         option1_Length.Count() +
-                                         option1.Count() +
-                                         option2_Length.Count() +
-                                         option2.Count() +
-                                         option3_Length.Count() +
-                                         option3.Count() +
-                                         judegs_length.Count();
+                        
+                        int attachSize = uidLength.Length +
+                                         uid.Length +
+                                         statusBytes.Length +
+                                         timeBytes.Length +
+                                         GPSValid.Length +
+                                         Loc.Length +
+                                         origin_lo.Length +
+                                         origin_la.Length +
+                                         judge.Length +
+                                         speed.Length +
+                                         course.Length +
+                                         distance.Length +
+                                         temperature.Length +
+                                         voltage.Length +
+                                         satellites.Length +
+                                         road_Length.Length +
+                                         town_Length.Length +
+                                         city_Length.Length +
+                                         option0_Length.Length +
+                                         option0.Length +
+                                         option1_Length.Length +
+                                         option1.Length +
+                                         option2_Length.Length +
+                                         option2.Length +
+                                         option3_Length.Length +
+                                         option3.Length +
+                                         judegs_length.Length;
                         byte[] attachSizeBytes = ByteCountBigEndian(attachSize);
 
 
 
 
-                        #endregion
+                        #endregion avlsPackageFromPort7000_attach
 
                         byte[] tailBytes = Encoding.ASCII.GetBytes(Tail);
-                        byte[] TailLength = ByteCountBigEndian(tailBytes.Count());
+                        byte[] TailLength = ByteCountBigEndian(tailBytes.Length);
 
+                        #region write to memorystream
+                        //head
+                        m.Write(HeadLength, 0, HeadLength.Length);
+                        m.Write(headBytes, 0, headBytes.Length);
+                        m.Write(Cmd_Type, 0, Cmd_Type.Length);
+                        m.Write(id, 0, id.Length);
+                        m.Write(priority, 0, priority.Length);
+                        m.Write(Attach_Type, 0, Attach_Type.Length);
+                        //attach size
+                        m.Write(attachSizeBytes, 0, attachSizeBytes.Length);
+                        //attch
+                        m.Write(uidLength, 0, uidLength.Length);
+                        m.Write(uid, 0, uid.Length);
+                        m.Write(statusBytes, 0, statusBytes.Length);
+                        m.Write(timeBytes, 0, timeBytes.Length);
+                        m.Write(GPSValid, 0, GPSValid.Length);
+                        m.Write(Loc, 0, Loc.Length);
+                        m.Write(origin_lo, 0, origin_lo.Length);
+                        m.Write(origin_la, 0, origin_la.Length);
+                        m.Write(judge, 0, judge.Length);
+                        m.Write(speed, 0, speed.Length);
+                        m.Write(course, 0, course.Length);
+                        m.Write(distance, 0, distance.Length);
+                        m.Write(temperature, 0, temperature.Length);
+                        m.Write(voltage, 0, voltage.Length);
+                        m.Write(satellites, 0, satellites.Length);
+                        m.Write(road_Length, 0, road_Length.Length);
+                        m.Write(town_Length, 0, town_Length.Length);
+                        m.Write(city_Length, 0, city_Length.Length);
+                        m.Write(option0_Length, 0, option0_Length.Length);
+                        m.Write(option0, 0, option0.Length);
+                        m.Write(option1_Length, 0, option1_Length.Length);
+                        m.Write(option1, 0, option1.Length);
+                        m.Write(option2_Length, 0, option2_Length.Length);
+                        m.Write(option2, 0, option2.Length);
+                        m.Write(option3_Length, 0, option3_Length.Length);
+                        m.Write(option3, 0, option3.Length);
+                        m.Write(judegs_length, 0, judegs_length.Length);
+
+                        //tail
+                        m.Write(TailLength,0,TailLength.Length);
+                        m.Write(tailBytes,0,tailBytes.Length);
+                        #endregion write to memorystream
+
+                        packageSendTo6002 = m.ToArray();
                     }
+                    Console.WriteLine(DateTime.Now.ToString("s")+"send to port 6002");
+                    netStream6002.Write(packageSendTo6002,0,packageSendTo6002.Length);
                 }
             }
         }
@@ -256,8 +306,8 @@ namespace AVLSServer
             byte[] latBytes = netduino.BitConverter.GetBytes(lat, netduino.BitConverter.ByteOrder.BigEndian);
             byte[] lonBytes = netduino.BitConverter.GetBytes(lon, netduino.BitConverter.ByteOrder.BigEndian);
             var m = new MemoryStream();
-            m.Write(lonBytes, 0, lonBytes.Count());
-            m.Write(latBytes, 0, latBytes.Count());
+            m.Write(lonBytes, 0, lonBytes.Length);
+            m.Write(latBytes, 0, latBytes.Length);
             return m.ToArray();
 
         }
