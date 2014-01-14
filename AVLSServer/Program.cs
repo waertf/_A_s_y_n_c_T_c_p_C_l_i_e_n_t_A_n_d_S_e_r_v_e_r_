@@ -49,23 +49,40 @@ namespace AVLSServer
         }
         static void Main(string[] args)
         {
-            TcpListener tcpListener7000 = new TcpListener(IPAddress.Parse(ConfigurationManager.AppSettings["ip"]),7000);
-            TcpListener tcpListener6002 = new TcpListener(IPAddress.Parse(ConfigurationManager.AppSettings["ip"]),6002);
+            TcpListener tcpListener7000, tcpListener6002;
+
+            if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
+            {
+                 tcpListener7000 = new TcpListener(IPAddress.Parse(ConfigurationManager.AppSettings["ip"]),7000);
+                 tcpListener6002 = new TcpListener(IPAddress.Parse(ConfigurationManager.AppSettings["ip"]),6002); 
+            }
+            else
+            {
+                 tcpListener6002 = new TcpListener(IPAddress.Any, 6002);
+                 tcpListener7000 = new TcpListener(IPAddress.Any, 7000);
+            }
+            
+           
             TcpClient client7000,client6002;
             tcpListener6002.Start();
             tcpListener7000.Start();
             Console.WriteLine("waiting for connect...");
             while (true)
             {
-                client6002 = tcpListener6002.AcceptTcpClient();
+                
                 client7000 = tcpListener7000.AcceptTcpClient();
+                Console.WriteLine("tcpListener7000.AcceptTcpClient");
+                client6002 = tcpListener6002.AcceptTcpClient();
+                Console.WriteLine("tcpListener6002.AcceptTcpClient");
                 ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002,client7000));
+                Thread.Sleep(300);
             }
 
         }
 
         private static void DealTheClient(object state)
         {
+            Console.WriteLine("+DealTheClient");
             Client clientState = (Client) state;
             TcpClient client7000 = clientState.getClient7000();
             TcpClient client6002 = clientState.getClient6002();
@@ -75,6 +92,7 @@ namespace AVLSServer
                 IPEndPoint)client6002.Client.RemoteEndPoint).Address.ToString()).ToString();
             NetworkStream netStream7000 = client7000.GetStream();
             NetworkStream netStream6002 = client6002.GetStream();
+
             using (StreamReader reader = new StreamReader(netStream7000))
             {
                 uint message7000Counter = 0;
@@ -284,8 +302,10 @@ namespace AVLSServer
                     }
                     Console.WriteLine(DateTime.Now.ToString("s")+"send to port 6002");
                     netStream6002.Write(packageSendTo6002,0,packageSendTo6002.Length);
+                    Thread.Sleep(300);
                 }
             }
+            Console.WriteLine("-DealTheClient");
         }
         static byte[] ByteCountBigEndian(int a)
         {
