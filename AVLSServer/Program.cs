@@ -175,7 +175,7 @@ namespace AVLSServer
                         byte[] statusBytes = new byte[]{0x0A};
 
                         DateTime time = DateTime.ParseExact(recvReportPacket.DateTime, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.AssumeUniversal);
-                        long timeLong = time.Ticks/TimeSpan.TicksPerMillisecond;
+                        long timeLong = Decimal.ToInt64(Decimal.Divide(time.Ticks - 621355968000000000, 10000));
                         byte[] timeBytes = BitConverter.GetBytes(timeLong).Reverse().ToArray();
                         byte[] GPSValid;
                         switch (recvReportPacket.GPSValid)
@@ -214,7 +214,17 @@ namespace AVLSServer
                         byte[] option3 = Encoding.ASCII.GetBytes(recvReportPacket.Message);
                         byte[] option3_Length = ByteCountBigEndian(option3.Length);
 
-                        byte[] judegs_length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                        byte[] judegs = new byte[]
+                        {
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00
+                        };
 
                         
                         int attachSize = uidLength.Length +
@@ -243,7 +253,7 @@ namespace AVLSServer
                                          option2.Length +
                                          option3_Length.Length +
                                          option3.Length +
-                                         judegs_length.Length;
+                                         judegs.Length;
                         byte[] attachSizeBytes = ByteCountBigEndian(attachSize);
 
 
@@ -291,7 +301,7 @@ namespace AVLSServer
                         m.Write(option2, 0, option2.Length);
                         m.Write(option3_Length, 0, option3_Length.Length);
                         m.Write(option3, 0, option3.Length);
-                        m.Write(judegs_length, 0, judegs_length.Length);
+                        m.Write(judegs, 0, judegs.Length);
 
                         //tail
                         m.Write(TailLength,0,TailLength.Length);
