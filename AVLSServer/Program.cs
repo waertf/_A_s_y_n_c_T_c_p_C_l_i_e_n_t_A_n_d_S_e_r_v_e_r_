@@ -174,7 +174,7 @@ namespace AVLSServer
 
                         byte[] statusBytes = new byte[]{0x0A};
 
-                        DateTime time = DateTime.ParseExact(recvReportPacket.DateTime, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.AssumeUniversal);
+                        DateTime time = DateTime.ParseExact(recvReportPacket.DateTime, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.AssumeUniversal).AddHours(-8);
                         long timeLong = Decimal.ToInt64(Decimal.Divide(time.Ticks - 621355968000000000, 10000));
                         byte[] timeBytes = BitConverter.GetBytes(timeLong).Reverse().ToArray();
                         byte[] GPSValid;
@@ -311,6 +311,11 @@ namespace AVLSServer
                         packageSendTo6002 = m.ToArray();
                     }
                     Console.WriteLine(DateTime.Now.ToString("s")+"send to port 6002");
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine(Encoding.ASCII.GetString(packageSendTo6002));
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine(BitConverter.ToString(packageSendTo6002));
+                    Console.WriteLine("-------------------------------------------");
                     netStream6002.Write(packageSendTo6002,0,packageSendTo6002.Length);
                     Thread.Sleep(300);
                 }
