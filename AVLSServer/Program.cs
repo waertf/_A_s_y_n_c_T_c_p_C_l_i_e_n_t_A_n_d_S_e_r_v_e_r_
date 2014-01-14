@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -174,7 +175,9 @@ namespace AVLSServer
 
                         byte[] statusBytes = new byte[]{0x0A};
 
-                        DateTime time = DateTime.ParseExact(recvReportPacket.DateTime, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.AssumeUniversal).AddHours(-8);
+                        DateTime time = DateTime.ParseExact(recvReportPacket.DateTime, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, 
+                            DateTimeStyles.AssumeUniversal |
+                            DateTimeStyles.AdjustToUniversal);
                         long timeLong = Decimal.ToInt64(Decimal.Divide(time.Ticks - 621355968000000000, 10000));
                         byte[] timeBytes = BitConverter.GetBytes(timeLong).Reverse().ToArray();
                         byte[] GPSValid;
