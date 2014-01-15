@@ -83,7 +83,7 @@ namespace AVLSServer
 
         private static void DealTheClient(object state)
         {
-            Console.WriteLine("+DealTheClient");
+            //Console.WriteLine("+DealTheClient");
             Client clientState = (Client) state;
             TcpClient client7000 = clientState.getClient7000();
             TcpClient client6002 = clientState.getClient6002();
@@ -104,12 +104,12 @@ namespace AVLSServer
 
                     if (message == null)
                     {
-                        Console.WriteLine(client7000Address + " has disconnected");
+                        //Console.WriteLine(client7000Address + " has disconnected");
                         break;
                     }
 
                     message7000Counter++;
-                    Console.WriteLine(client7000Address+String.Format(" >> [{0}] Message received: {1}", message7000Counter, message));
+                    //Console.WriteLine(client7000Address+String.Format(" >> [{0}] Message received: {1}", message7000Counter, message));
                     string[] stringSeparators = new string[] { ",","%%" };
                     string[] receiveStrings = message.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
                     int counter = 0;
@@ -117,7 +117,7 @@ namespace AVLSServer
                     foreach (var receiveString in receiveStrings)
                     {
                         
-                        Console.WriteLine(counter +":"+receiveString);
+                        //Console.WriteLine(counter +":"+receiveString);
                         switch (counter)
                         {
                             case 0:
@@ -313,19 +313,19 @@ namespace AVLSServer
 
                         packageSendTo6002 = m.ToArray();
                     }
-                    Console.WriteLine(DateTime.Now.ToString("s")+"send to port 6002");
-                    Console.WriteLine("-------------------------------------------");
-                    Console.WriteLine(Encoding.ASCII.GetString(packageSendTo6002));
-                    Console.WriteLine("-------------------------------------------");
-                    Console.WriteLine(BitConverter.ToString(packageSendTo6002));
-                    Console.WriteLine("-------------------------------------------");
+                    //Console.WriteLine(DateTime.Now.ToString("s")+"send to port 6002");
+                    //Console.WriteLine("-------------------------------------------");
+                    //Console.WriteLine(Encoding.ASCII.GetString(packageSendTo6002));
+                    //Console.WriteLine("-------------------------------------------");
+                    //Console.WriteLine(BitConverter.ToString(packageSendTo6002));
+                    //Console.WriteLine("-------------------------------------------");
                     Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002,0,packageSendTo6002.Length));
                     writeThread.Start();
                     
                     Thread.Sleep(1);
                 }
             }
-            Console.WriteLine("-DealTheClient");
+            //Console.WriteLine("-DealTheClient");
         }
         static byte[] ByteCountBigEndian(int a)
         {
