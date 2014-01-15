@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVLSServer", "AVLSServer\AV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApplication1AVLSServer", "WindowsFormsApplication1AVLSServer\WindowsFormsApplication1AVLSServer.csproj", "{BFBF37F5-F5DB-4942-8510-F40737B0FF16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1AVSLPackageSender", "ConsoleApplication1AVSLPackageSender\ConsoleApplication1AVSLPackageSender.csproj", "{CDE977ED-220D-4340-8885-BF42CB356C6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{BFBF37F5-F5DB-4942-8510-F40737B0FF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFBF37F5-F5DB-4942-8510-F40737B0FF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFBF37F5-F5DB-4942-8510-F40737B0FF16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDE977ED-220D-4340-8885-BF42CB356C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDE977ED-220D-4340-8885-BF42CB356C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDE977ED-220D-4340-8885-BF42CB356C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDE977ED-220D-4340-8885-BF42CB356C6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
