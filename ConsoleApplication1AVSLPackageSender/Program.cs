@@ -52,7 +52,7 @@ namespace ConsoleApplication1AVSLPackageSender
                           Dir + "," +
                           Temp + "," +
                           Status + "," +
-                          _event + "test" + Environment.NewLine;
+                          _event + ",test" + Environment.NewLine;
                 byte[] sendByte = Encoding.ASCII.GetBytes(package);
                 Thread sendthread = new Thread(() => networkStream.Write(sendByte, 0, sendByte.Length));
                 sendthread.Start();
