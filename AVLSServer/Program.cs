@@ -76,7 +76,7 @@ namespace AVLSServer
                 client6002 = tcpListener6002.AcceptTcpClient();
                 Console.WriteLine("tcpListener6002.AcceptTcpClient");
                 ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002,client7000));
-                Thread.Sleep(300);
+                Thread.Sleep(1);
             }
 
         }
@@ -319,8 +319,10 @@ namespace AVLSServer
                     Console.WriteLine("-------------------------------------------");
                     Console.WriteLine(BitConverter.ToString(packageSendTo6002));
                     Console.WriteLine("-------------------------------------------");
-                    netStream6002.Write(packageSendTo6002,0,packageSendTo6002.Length);
-                    Thread.Sleep(300);
+                    Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002,0,packageSendTo6002.Length));
+                    writeThread.Start();
+                    
+                    Thread.Sleep(1);
                 }
             }
             Console.WriteLine("-DealTheClient");
