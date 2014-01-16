@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.ID = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.GPSValid = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.DateTime = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
@@ -39,7 +40,6 @@
             this.Status = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.Event = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.Message = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,8 +66,17 @@
             this.dataGridView1.Size = new System.Drawing.Size(713, 358);
             this.dataGridView1.TabIndex = 0;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Location = new System.Drawing.Point(0, 336);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(713, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
             // ID
             // 
+            this.ID.DataPropertyName = "ID";
             this.ID.HeaderText = "ID";
             this.ID.Name = "ID";
             this.ID.ReadOnly = true;
@@ -76,6 +85,7 @@
             // 
             // GPSValid
             // 
+            this.GPSValid.DataPropertyName = "GPSValid";
             this.GPSValid.HeaderText = "GPSValid";
             this.GPSValid.Name = "GPSValid";
             this.GPSValid.ReadOnly = true;
@@ -84,6 +94,7 @@
             // 
             // DateTime
             // 
+            this.DateTime.DataPropertyName = "DateTime";
             this.DateTime.HeaderText = "DateTime";
             this.DateTime.Name = "DateTime";
             this.DateTime.ReadOnly = true;
@@ -92,6 +103,7 @@
             // 
             // LatLon
             // 
+            this.LatLon.DataPropertyName = "LatLon";
             this.LatLon.HeaderText = "Lat_Lon";
             this.LatLon.Name = "LatLon";
             this.LatLon.ReadOnly = true;
@@ -100,6 +112,7 @@
             // 
             // Speed
             // 
+            this.Speed.DataPropertyName = "Speed";
             this.Speed.HeaderText = "Speed";
             this.Speed.Name = "Speed";
             this.Speed.ReadOnly = true;
@@ -108,6 +121,7 @@
             // 
             // Direction
             // 
+            this.Direction.DataPropertyName = "Direction";
             this.Direction.HeaderText = "Direction";
             this.Direction.Name = "Direction";
             this.Direction.ReadOnly = true;
@@ -116,6 +130,7 @@
             // 
             // Temperature
             // 
+            this.Temperature.DataPropertyName = "Temperature";
             this.Temperature.HeaderText = "Temperature";
             this.Temperature.Name = "Temperature";
             this.Temperature.ReadOnly = true;
@@ -124,6 +139,7 @@
             // 
             // Status
             // 
+            this.Status.DataPropertyName = "Status";
             this.Status.HeaderText = "Status";
             this.Status.Name = "Status";
             this.Status.ReadOnly = true;
@@ -132,6 +148,7 @@
             // 
             // Event
             // 
+            this.Event.DataPropertyName = "Event";
             this.Event.HeaderText = "Event";
             this.Event.Name = "Event";
             this.Event.ReadOnly = true;
@@ -140,19 +157,12 @@
             // 
             // Message
             // 
+            this.Message.DataPropertyName = "Message";
             this.Message.HeaderText = "Message";
             this.Message.Name = "Message";
             this.Message.ReadOnly = true;
             this.Message.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Message.Width = 69;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 336);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(713, 22);
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
             // 
             // Form1
             // 
@@ -174,6 +184,7 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn ID;
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn GPSValid;
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn DateTime;
@@ -184,7 +195,6 @@
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn Status;
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn Event;
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn Message;
-        private System.Windows.Forms.StatusStrip statusStrip1;
     }
 }
 
