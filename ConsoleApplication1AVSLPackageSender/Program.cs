@@ -14,7 +14,7 @@ namespace ConsoleApplication1AVSLPackageSender
         static string[] GPSValid = new string[] { "L", "A" };
         const string Temp = "NA";
         const string Status = "00000000";
-        static string[] Event = new[] { "181", "182", "175", "000", "-1", "150" };
+        static string[] Event = new[] { "181", "182", "175", "0", "-1", "150" };
         static string[] Loc = new[]
         {
             "N2457.7728E12155.29", "N2506.7122E12154.9096",
