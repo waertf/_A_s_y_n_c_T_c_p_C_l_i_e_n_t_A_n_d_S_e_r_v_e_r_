@@ -23,9 +23,10 @@ namespace ConsoleApplication1AVSLPackageSender
         };
          static Random rand = new Random();
         private static NetworkStream networkStream;
+        static TcpClient avlsTcpClient;
         static void Main(string[] args)
         {
-            var avlsTcpClient = new TcpClient(ConfigurationManager.AppSettings["ServerIP"], 7000);
+            avlsTcpClient = new TcpClient(ConfigurationManager.AppSettings["ServerIP"], 7000);
             networkStream = avlsTcpClient.GetStream();
             Thread sendthread = new Thread(() => send(networkStream));
             sendthread.Start();
@@ -38,12 +39,12 @@ namespace ConsoleApplication1AVSLPackageSender
             {
                 {
                     string time = DateTime.UtcNow.ToString("yyMMddHHmmss");
-                    string Speed = rand.Next(0, 999).ToString();
-                    string Dir = rand.Next(0, 359).ToString();
-                    string uid = uidStrings[rand.Next(0, 4)];
-                    string gps = GPSValid[rand.Next(0, 1)];
-                    string _event = Event[rand.Next(0, 4)];
-                    string loc = Loc[rand.Next(0, 4)];
+                    string Speed = rand.Next(0, 1000).ToString();
+                    string Dir = rand.Next(0, 360).ToString();
+                    string uid = uidStrings[rand.Next(0, uidStrings.Length)];
+                    string gps = GPSValid[rand.Next(0, GPSValid.Length)];
+                    string _event = Event[rand.Next(0, Event.Length)];
+                    string loc = Loc[rand.Next(0, Loc.Length)];
                     string package = "%%" + uid + "," +
                               gps + "," +
                               time + "," +
@@ -54,8 +55,25 @@ namespace ConsoleApplication1AVSLPackageSender
                               Status + "," +
                               _event + ",test" + Environment.NewLine;
                     byte[] sendByte = Encoding.ASCII.GetBytes(package);
-                    networkStream.BeginWrite(sendByte, 0, sendByte.Length, sendAsyncCallback, networkStream);
-                    networkStream.Flush();
+                    
+                    if (true)
+                    {
+                        try
+                        {
+                            networkStream.Write(sendByte, 0, sendByte.Length);
+                            //networkStream.BeginWrite(sendByte, 0, sendByte.Length, sendAsyncCallback, networkStream);
+                            networkStream.Flush();
+                        }
+                        catch (Exception ex)
+                        {
+                            networkStream.Close();
+                            avlsTcpClient.Close();
+                            avlsTcpClient = new TcpClient(ConfigurationManager.AppSettings["ServerIP"], 7000);
+                            networkStream = avlsTcpClient.GetStream();
+                            Thread sendthread = new Thread(() => send(networkStream));
+                            sendthread.Start();
+                        }
+                    }
                     Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sleepInMilliSeconds"]));
                 }
                 
@@ -64,8 +82,20 @@ namespace ConsoleApplication1AVSLPackageSender
 
         private static void sendAsyncCallback(IAsyncResult ar)
         {
-            NetworkStream myNetworkStream = (NetworkStream)ar.AsyncState;
-            myNetworkStream.EndWrite(ar);
+            try
+            {
+                NetworkStream myNetworkStream = (NetworkStream)ar.AsyncState;
+                myNetworkStream.EndWrite(ar);
+            }
+            catch (Exception ex)
+            {
+                networkStream.Close();
+                avlsTcpClient.Close();
+                avlsTcpClient = new TcpClient(ConfigurationManager.AppSettings["ServerIP"], 7000);
+                networkStream = avlsTcpClient.GetStream();
+                Thread sendthread = new Thread(() => send(networkStream));
+                sendthread.Start();
+            }
         }
     }
 }
