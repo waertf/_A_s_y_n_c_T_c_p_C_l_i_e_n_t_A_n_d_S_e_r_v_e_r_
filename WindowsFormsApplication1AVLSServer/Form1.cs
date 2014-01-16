@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,7 +23,18 @@ namespace WindowsFormsApplication1AVLSServer
         {
             InitializeComponent();
             
-
+            Hashtable ht = new Hashtable();
+            string[] s1 = new[] {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+            string[] s2 = new[] {"1", "1", "5", "4", "5", "6", "7", "8", "9"};
+            ht.Add(s1.ToString(),s1);
+            ht.Add(s2.ToString(),s2);
+            dataGridView1.DataSource = ht.Cast<DictionaryEntry>()
+                             .Select(x => new
+                             {
+                                 ID = x.Key.ToString(),
+                                 GPSValid = x.Value.ToString()
+                             })
+                             .ToList();
             dataGridView1.DataBindingComplete += new DataGridViewBindingCompleteEventHandler(dataGridView1_DataBindingComplete);
             this.Shown += new EventHandler(Form1_Shown);
             dataGridView1.AutoSize = true;
@@ -51,7 +63,7 @@ namespace WindowsFormsApplication1AVLSServer
                   {
                       string test = dataGridView1.RowCount.ToString();
                       this.UIThread(() => this.Text = "Total number : "+test);
-                      Thread.Sleep(100);
+                      Thread.Sleep(300);
                   }
               });
             t1.Start();
