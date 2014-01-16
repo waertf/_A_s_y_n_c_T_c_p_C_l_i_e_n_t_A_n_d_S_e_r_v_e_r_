@@ -48,10 +48,14 @@ namespace AVLSServer
             public string Message;
 
         }
+        static TcpListener tcpListener7000, tcpListener6002;
+        static TcpClient client7000t, client6002t;
+        static ManualResetEvent stopEvent = new ManualResetEvent(false);
+        static bool port7000reset, port6002reset,port7000reconnect;
         static void Main(string[] args)
         {
-            TcpListener tcpListener7000, tcpListener6002;
 
+            port7000reconnect = true;
             if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
             {
                  tcpListener7000 = new TcpListener(IPAddress.Parse(ConfigurationManager.AppSettings["ip"]),7000);
@@ -64,47 +68,95 @@ namespace AVLSServer
             }
             
            
-            TcpClient client7000,client6002;
+            
             tcpListener6002.Start();
             tcpListener7000.Start();
             Console.WriteLine("waiting for connect...");
             while (true)
             {
-                
-                client7000 = tcpListener7000.AcceptTcpClient();
-                Console.WriteLine("tcpListener7000.AcceptTcpClient");
-                client6002 = tcpListener6002.AcceptTcpClient();
-                Console.WriteLine("tcpListener6002.AcceptTcpClient");
-                ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002,client7000));
+                if (client7000t == null)
+                {
+                    client7000t = tcpListener7000.AcceptTcpClient();
+                    port7000reset = true;
+                }
+                //Console.WriteLine("tcpListener7000.AcceptTcpClient");
+                if (client6002t == null)
+                {
+                    client6002t = tcpListener6002.AcceptTcpClient();
+                    port6002reset = true;
+                }
+                //Console.WriteLine("tcpListener6002.AcceptTcpClient");
+                stopEvent.Reset();
+                ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002t,client7000t));
+                stopEvent.WaitOne();
                 Thread.Sleep(1);
             }
 
         }
-
+        static TcpClient client7000, client6002;
+        static string client7000Address,client7000Port, client6002Address;
+        static NetworkStream netStream7000, netStream6002;
+        static StreamReader reader = null;
         private static void DealTheClient(object state)
         {
             //Console.WriteLine("+DealTheClient");
             Client clientState = (Client) state;
-            TcpClient client7000 = clientState.getClient7000();
-            TcpClient client6002 = clientState.getClient6002();
-            string client7000Address = IPAddress.Parse(((
-                IPEndPoint) client7000.Client.RemoteEndPoint).Address.ToString()).ToString();
-            string client6002Address = IPAddress.Parse(((
-                IPEndPoint)client6002.Client.RemoteEndPoint).Address.ToString()).ToString();
-            NetworkStream netStream7000 = client7000.GetStream();
-            NetworkStream netStream6002 = client6002.GetStream();
 
-            using (StreamReader reader = new StreamReader(netStream7000))
+            
+
+            if (port7000reset)
+            {
+                client7000 = clientState.getClient7000();
+                client7000Address = IPAddress.Parse(((
+                    IPEndPoint)client7000.Client.RemoteEndPoint).Address.ToString()).ToString();
+                client7000Port = ((
+                    IPEndPoint)client7000.Client.RemoteEndPoint).Port.ToString();
+                netStream7000 = client7000.GetStream();
+                port7000reset = false;
+                Console.WriteLine(client7000Address + ":7000 has connected");
+            }
+            if (port6002reset)
+            {
+                 client6002 = clientState.getClient6002();
+                 client6002Address = IPAddress.Parse(((
+                    IPEndPoint)client6002.Client.RemoteEndPoint).Address.ToString()).ToString();
+                 netStream6002 = client6002.GetStream();
+                port6002reset = false;
+                Console.WriteLine(client6002Address + ":6002 has connected");
+            }
+            
+            if (reader == null)
+            {
+                reader = new StreamReader(netStream7000);
+            }
             {
                 uint message7000Counter = 0;
                 int idCounter = 0;
                 while (true)
                 {
-                    string message = reader.ReadLine();
+                    string message;
+                    try
+                    {
+                        message = reader.ReadLine();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        netStream7000.Close();
+                        client7000.Close();
+                        client7000t  =null;
+                        reader = null;
+                        stopEvent.Set();
+                        break;
+                    }
 
                     if (message == null)
                     {
-                        //Console.WriteLine(client7000Address + " has disconnected");
+                        Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        netStream7000.Close();
+                        client7000.Close();
+                        client7000t = null;
+                        stopEvent.Set();
                         break;
                     }
 
@@ -153,7 +205,7 @@ namespace AVLSServer
                         }
                         counter++;
                     }
-                    byte[] packageSendTo6002;
+                    //byte[] packageSendTo6002;
                     using (var m = new MemoryStream())
                     {
                         string Head = "$CMD_H#";
@@ -311,7 +363,24 @@ namespace AVLSServer
                         m.Write(tailBytes,0,tailBytes.Length);
                         #endregion write to memorystream
 
-                        packageSendTo6002 = m.ToArray();
+                        byte[] packageSendTo6002 = m.ToArray();
+                        try
+                        {
+                            netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(client6002Address + ":6002 has disconnected");
+                            netStream6002.Close();
+                            client6002.Close();
+                            client6002t = null;
+                            stopEvent.Set();
+                            break;
+                        }
+                        if(netStream6002!=null)
+                            netStream6002.Flush();
+                        //Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
+                        //writeThread.Start();
                     }
                     //Console.WriteLine(DateTime.Now.ToString("s")+"send to port 6002");
                     //Console.WriteLine("-------------------------------------------");
@@ -319,8 +388,7 @@ namespace AVLSServer
                     //Console.WriteLine("-------------------------------------------");
                     //Console.WriteLine(BitConverter.ToString(packageSendTo6002));
                     //Console.WriteLine("-------------------------------------------");
-                    Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002,0,packageSendTo6002.Length));
-                    writeThread.Start();
+                    
                     
                     Thread.Sleep(1);
                 }
