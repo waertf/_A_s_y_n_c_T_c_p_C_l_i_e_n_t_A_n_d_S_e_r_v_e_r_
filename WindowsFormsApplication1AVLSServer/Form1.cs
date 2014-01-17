@@ -26,8 +26,8 @@ namespace WindowsFormsApplication1AVLSServer
         {
             InitializeComponent();
             //dataGridView1.AutoGenerateColumns = false;
-
-            records.Add(new Record()
+            table = ClassToDataTable.CreateTable(new Record());
+            ClassToDataTable.AddRow(ref table,new Record()
             {
                 DateTime = "11",
                 Direction = "2",
@@ -40,7 +40,7 @@ namespace WindowsFormsApplication1AVLSServer
                 Status = "9",
                 Temperature = "10"
             });
-            records.Add(new Record()
+            ClassToDataTable.AddRow(ref table, new Record()
             {
                 DateTime = "1",
                 Direction = "2",
@@ -53,7 +53,7 @@ namespace WindowsFormsApplication1AVLSServer
                 Status = "9",
                 Temperature = "10"
             });
-            table = ConvertToDatatable(records);
+            //table = ConvertToDatatable(records);
 
             dataSource = new BindingSource(table, null);
             dataGridView1.DataSource = dataSource;
@@ -210,7 +210,49 @@ namespace WindowsFormsApplication1AVLSServer
             }
         }
     }
+    public static class ClassToDataTable
+    {
+        public static DataTable CreateTable(object objClass)
+        {
+            Type objType = objClass.GetType();
+            DataTable result = new DataTable(objType.ToString().Split('+')[0]);
+            List<PropertyInfo> propertyList = new List<PropertyInfo>(objType.GetProperties());
 
+            foreach (PropertyInfo prop in propertyList)
+            {
+                object propValue = prop.GetValue(objClass, null);
+                result.Columns.Add(prop.Name, prop.PropertyType);
+            }
+            return result;
+        }
+
+        public static void AddRow(ref DataTable table, object data)
+        {
+            Type objType = data.GetType();
+            string className = objType.ToString().Split('+')[0];
+
+            if (!table.TableName.Equals(className))
+            {
+                throw new Exception("DataTableConverter.AddRow: " +
+                                    "TableName not equal to className.");
+            }
+
+            DataRow dRow = table.NewRow();
+            List<PropertyInfo> propertyList = new List<PropertyInfo>(objType.GetProperties());
+
+            foreach (PropertyInfo prop in propertyList)
+            {
+                if (table.Columns[prop.Name] == null)
+                {
+                    throw new Exception("DataTableConverter.AddRow: " +
+                                        "Column name does not exist: " + prop.Name);
+                }
+                object propValue = prop.GetValue(data, null);
+                dRow[prop.Name] = propValue;
+            }
+            table.Rows.Add(dRow);
+        }
+    }
     class Record
     {
         public string ID { get; set; }
