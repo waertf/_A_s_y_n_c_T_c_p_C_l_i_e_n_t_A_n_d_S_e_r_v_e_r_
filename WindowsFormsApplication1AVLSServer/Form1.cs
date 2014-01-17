@@ -215,7 +215,7 @@ namespace WindowsFormsApplication1AVLSServer
         public static DataTable CreateTable(object objClass)
         {
             Type objType = objClass.GetType();
-            DataTable result = new DataTable(objType.ToString().Split('+')[0]);
+            DataTable result = new DataTable(objType.ToString().Split('.')[1]);
             List<PropertyInfo> propertyList = new List<PropertyInfo>(objType.GetProperties());
 
             foreach (PropertyInfo prop in propertyList)
@@ -229,7 +229,7 @@ namespace WindowsFormsApplication1AVLSServer
         public static void AddRow(ref DataTable table, object data)
         {
             Type objType = data.GetType();
-            string className = objType.ToString().Split('+')[0];
+            string className = objType.ToString().Split('.')[1];
 
             if (!table.TableName.Equals(className))
             {
