@@ -19,22 +19,45 @@ namespace WindowsFormsApplication1AVLSServer
     {
         private ToolStripStatusLabel filterStatusLabel, showAllLabel;
         private Thread t1;
+        private List<Record> records = new List<Record>();
+        private DataTable table;
+        private BindingSource dataSource;
         public Form1()
         {
             InitializeComponent();
-            
-            Hashtable ht = new Hashtable();
-            string[] s1 = new[] {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-            string[] s2 = new[] {"1", "1", "5", "4", "5", "6", "7", "8", "9"};
-            ht.Add(s1.ToString(),s1);
-            ht.Add(s2.ToString(),s2);
-            dataGridView1.DataSource = ht.Cast<DictionaryEntry>()
-                             .Select(x => new
-                             {
-                                 ID = x.Key.ToString(),
-                                 GPSValid = x.Value.ToString()
-                             })
-                             .ToList();
+            //dataGridView1.AutoGenerateColumns = false;
+
+            records.Add(new Record()
+            {
+                DateTime = "11",
+                Direction = "2",
+                Event = "3",
+                GPSValid = "4",
+                ID = "5",
+                Lat_Lon = "6",
+                Message = "7",
+                Speed = "8",
+                Status = "9",
+                Temperature = "10"
+            });
+            records.Add(new Record()
+            {
+                DateTime = "1",
+                Direction = "2",
+                Event = "3",
+                GPSValid = "4",
+                ID = "5",
+                Lat_Lon = "6",
+                Message = "7",
+                Speed = "8",
+                Status = "9",
+                Temperature = "10"
+            });
+            table = ConvertToDatatable(records);
+
+            dataSource = new BindingSource(table, null);
+            dataGridView1.DataSource = dataSource;
+
             dataGridView1.DataBindingComplete += new DataGridViewBindingCompleteEventHandler(dataGridView1_DataBindingComplete);
             this.Shown += new EventHandler(Form1_Shown);
             dataGridView1.AutoSize = true;
@@ -70,6 +93,8 @@ namespace WindowsFormsApplication1AVLSServer
             #endregion test
 
         }
+
+        
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             t1.Abort();
@@ -122,6 +147,49 @@ namespace WindowsFormsApplication1AVLSServer
 
             }
         }
+        private static DataTable ConvertToDatatable<T>(List<T> data)
+        {
+            PropertyDescriptorCollection props =
+                TypeDescriptor.GetProperties(typeof(T));
+            DataTable table = new DataTable();
+            for (int i = 0; i < props.Count; i++)
+            {
+                PropertyDescriptor prop = props[i];
+                if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    table.Columns.Add(prop.Name, prop.PropertyType.GetGenericArguments()[0]);
+                else
+                    table.Columns.Add(prop.Name, prop.PropertyType);
+            }
+            object[] values = new object[props.Count];
+            foreach (T item in data)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item);
+                }
+                table.Rows.Add(values);
+            }
+            return table;
+        }
+
+        
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            table.Rows[0][0] = "999";
+            //dataSource.ResetBindings(false);
+
+            /*
+            records.RemoveAt(0);
+            table = ConvertToDatatable(records);
+
+            dataSource = new BindingSource(table, null);
+            dataGridView1.DataSource = dataSource;*/
+        }
+
+        
+
+        
     }
     public static class ControlExtensions
     {
@@ -141,5 +209,19 @@ namespace WindowsFormsApplication1AVLSServer
                 code.Invoke();
             }
         }
+    }
+
+    class Record
+    {
+        public string ID { get; set; }
+        public string GPSValid { get; set; }
+        public string DateTime { get; set; }
+        public string Lat_Lon { get; set; }
+        public string Speed { get; set; }
+        public string Direction { get; set; }
+        public string Temperature { get; set; }
+        public string Status { get; set; }
+        public string Event { get; set; }
+        public string Message { get; set; }
     }
 }
