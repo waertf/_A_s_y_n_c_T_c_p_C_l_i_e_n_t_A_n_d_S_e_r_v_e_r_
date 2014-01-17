@@ -40,7 +40,6 @@
             this.Event = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.Message = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,12 +59,12 @@
             this.Status,
             this.Event,
             this.Message});
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(484, 198);
+            this.dataGridView1.Size = new System.Drawing.Size(713, 358);
             this.dataGridView1.TabIndex = 0;
-            
             // 
             // ID
             // 
@@ -165,16 +164,6 @@
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(412, 250);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -182,7 +171,6 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(713, 358);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.dataGridView1);
             this.Name = "Form1";
@@ -207,7 +195,6 @@
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn Status;
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn Event;
         private DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn Message;
-        private System.Windows.Forms.Button button1;
     }
 }
 
