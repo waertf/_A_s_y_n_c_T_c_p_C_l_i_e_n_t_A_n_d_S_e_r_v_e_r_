@@ -564,16 +564,18 @@ namespace WindowsFormsApplication1AVLSServer
 
         private void ModifyTable( DataRow[] founDataRows,  Record record)
         {
+            founDataRows[0].BeginEdit();
             founDataRows[0]["Lat_Lon"] = record.Lat_Lon;
             founDataRows[0]["Message"] = record.Message;
             founDataRows[0]["Speed"] = record.Speed;
             founDataRows[0]["Status"] = record.Status;
             founDataRows[0]["Temperature"] = record.Temperature;
-            founDataRows[0]["DateTime"] = record.DateTime;
+            founDataRows[0]["DateTime"] = System.DateTime.Now.ToString("s");
             founDataRows[0]["Direction"] = record.Direction;
             founDataRows[0]["Event"] = record.Event;
             founDataRows[0]["GPSValid"] = record.GPSValid;
-            this.UIThread(() => dataGridView1.Refresh());
+            founDataRows[0].EndEdit();
+            dataGridView1.Refresh();
         }
 
 
@@ -733,7 +735,9 @@ namespace WindowsFormsApplication1AVLSServer
                                         "Column name does not exist: " + prop.Name);
                 }
                 object propValue = prop.GetValue(data, null);
+                dRow.BeginEdit();
                 dRow[prop.Name] = propValue;
+                dRow.EndEdit();
             }
             table.Rows.Add(dRow);
         }
