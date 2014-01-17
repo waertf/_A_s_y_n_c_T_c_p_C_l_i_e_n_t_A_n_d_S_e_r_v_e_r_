@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -20,42 +21,49 @@ namespace WindowsFormsApplication1AVLSServer
         private ToolStripStatusLabel filterStatusLabel, showAllLabel;
         private Thread t1;
         private List<Record> records = new List<Record>();
-        private DataTable table;
+        private DataTable dt;
         private BindingSource dataSource;
+        private readonly string xmlFile ;
         public Form1()
         {
             InitializeComponent();
-            //dataGridView1.AutoGenerateColumns = false;
-            table = ClassToDataTable.CreateTable(new Record());
-            ClassToDataTable.AddRow(ref table,new Record()
+            xmlFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\records.xml";
+            dataGridView1.AllowUserToAddRows = false;//remove blank row when initial
+            dt = ClassToDataTable.CreateTable(new Record());
+            dt.PrimaryKey = new DataColumn[] { dt.Columns["ID"] };
+            if (File.Exists(xmlFile))
+                dt.ReadXml(xmlFile);
+            /*
+            ClassToDataTable.AddRow(ref dt,new Record()
             {
                 DateTime = "11",
                 Direction = "2",
                 Event = "3",
                 GPSValid = "4",
-                ID = "5",
+                ID = "1",
                 Lat_Lon = "6",
                 Message = "7",
                 Speed = "8",
                 Status = "9",
                 Temperature = "10"
             });
-            ClassToDataTable.AddRow(ref table, new Record()
+            ClassToDataTable.AddRow(ref dt, new Record()
             {
                 DateTime = "1",
                 Direction = "2",
                 Event = "3",
                 GPSValid = "4",
-                ID = "5",
+                ID = "2",
                 Lat_Lon = "6",
                 Message = "7",
                 Speed = "8",
                 Status = "9",
                 Temperature = "10"
             });
-            //table = ConvertToDatatable(records);
-
-            dataSource = new BindingSource(table, null);
+            */
+            //dt = ConvertToDatatable(records);
+            
+            dataSource = new BindingSource(dt, null);
             dataGridView1.DataSource = dataSource;
 
             dataGridView1.DataBindingComplete += new DataGridViewBindingCompleteEventHandler(dataGridView1_DataBindingComplete);
@@ -97,6 +105,7 @@ namespace WindowsFormsApplication1AVLSServer
         
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            //dt.WriteXml(xmlFile);
             t1.Abort();
             base.OnFormClosing(e);
         }
@@ -176,14 +185,14 @@ namespace WindowsFormsApplication1AVLSServer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            table.Rows[0][0] = "999";
+            dt.Rows[0][0] = "999";
             //dataSource.ResetBindings(false);
 
             /*
             records.RemoveAt(0);
-            table = ConvertToDatatable(records);
+            dt = ConvertToDatatable(records);
 
-            dataSource = new BindingSource(table, null);
+            dataSource = new BindingSource(dt, null);
             dataGridView1.DataSource = dataSource;*/
         }
 
