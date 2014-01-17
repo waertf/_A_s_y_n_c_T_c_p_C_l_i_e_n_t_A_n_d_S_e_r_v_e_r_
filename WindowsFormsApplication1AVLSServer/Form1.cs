@@ -19,7 +19,7 @@ namespace WindowsFormsApplication1AVLSServer
     public partial class Form1 : Form
     {
         private ToolStripStatusLabel filterStatusLabel, showAllLabel;
-        private Thread t1;
+        private Thread totalDisplayRowsNumberThread;
         private List<Record> records = new List<Record>();
         private DataTable dt;
         private BindingSource dataSource;
@@ -83,10 +83,10 @@ namespace WindowsFormsApplication1AVLSServer
             showAllLabel.LinkBehavior = LinkBehavior.HoverUnderline;
 
             showAllLabel.Click += new EventHandler(showAllLabel_Click);
-            
 
-            #region test
-             t1 = new System.Threading.Thread
+
+            #region totalDisplayRowsNumberThread
+            totalDisplayRowsNumberThread = new System.Threading.Thread
               (delegate()
               {
                   Random rand = new Random();
@@ -97,8 +97,8 @@ namespace WindowsFormsApplication1AVLSServer
                       Thread.Sleep(300);
                   }
               });
-            t1.Start();
-            #endregion test
+            totalDisplayRowsNumberThread.Start();
+            #endregion totalDisplayRowsNumberThread
 
         }
 
@@ -106,7 +106,7 @@ namespace WindowsFormsApplication1AVLSServer
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             //dt.WriteXml(xmlFile);
-            t1.Abort();
+            totalDisplayRowsNumberThread.Abort();
             base.OnFormClosing(e);
         }
         private void showAllLabel_Click(object sender, EventArgs e)
