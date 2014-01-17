@@ -16,6 +16,7 @@ using System.Threading;
 using System.Windows.Forms;
 using DataGridViewAutoFilter;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace WindowsFormsApplication1AVLSServer
 {
@@ -28,6 +29,7 @@ namespace WindowsFormsApplication1AVLSServer
         private DataTable dt;
         private BindingSource dataSource;
         private readonly string xmlFile ;
+        private Thread avlsServerThread;
 
         internal class Client
         {
@@ -147,7 +149,7 @@ namespace WindowsFormsApplication1AVLSServer
             totalDisplayRowsNumberThread.Start();
             #endregion totalDisplayRowsNumberThread
 
-            Thread avlsServerThread = new Thread(()=>AVLSServer());
+            avlsServerThread = new Thread(()=>AVLSServer());
             avlsServerThread.Start();
             //AddOrModifyTable( dt,record);
 
@@ -552,8 +554,9 @@ namespace WindowsFormsApplication1AVLSServer
             else
             {
                 //modify table
-                Thread modifyThread = new Thread(()=>ModifyTable( founDataRows, record));
-                modifyThread.Start();
+                //Thread modifyThread = new Thread(()=>ModifyTable( founDataRows, record));
+                //modifyThread.Start();
+                this.UIThread(() => ModifyTable(founDataRows, record));
             }
             //this.UIThread(()=>dataSource.ResetBindings(false));
             //Thread.Sleep(300);
@@ -578,7 +581,9 @@ namespace WindowsFormsApplication1AVLSServer
         {
             dt.WriteXml(xmlFile);
             totalDisplayRowsNumberThread.Abort();
+            avlsServerThread.Abort();
             base.OnFormClosing(e);
+            Process.GetCurrentProcess().Kill();
         }
         private void showAllLabel_Click(object sender, EventArgs e)
         {
