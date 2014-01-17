@@ -27,6 +27,7 @@ namespace WindowsFormsApplication1AVLSServer
         public Form1()
         {
             InitializeComponent();
+            Record record = new Record();
             xmlFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\records.xml";
             dataGridView1.AllowUserToAddRows = false;//remove blank row when initial
             dt = ClassToDataTable.CreateTable(new Record());
@@ -100,12 +101,44 @@ namespace WindowsFormsApplication1AVLSServer
             totalDisplayRowsNumberThread.Start();
             #endregion totalDisplayRowsNumberThread
 
+            AddOrModifyTable( dt,record);
+
         }
 
-        
+        private void AddOrModifyTable( DataTable dataTable, Record record)
+        {
+            DataRow[] founDataRows = dataTable.Select("ID='" + record.ID + "'");
+            if (founDataRows.Length == 0)
+            {
+                //add to table
+                Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
+                addThread.Start();
+            }
+            else
+            {
+                //modify table
+                Thread modifyThread = new Thread(()=>ModifyTable( founDataRows, record));
+                modifyThread.Start();
+            }
+        }
+
+        private void ModifyTable( DataRow[] founDataRows,  Record record)
+        {
+            founDataRows[0]["Lat_Lon"] = record.Lat_Lon;
+            founDataRows[0]["Message"] = record.Message;
+            founDataRows[0]["Speed"] = record.Speed;
+            founDataRows[0]["Status"] = record.Status;
+            founDataRows[0]["Temperature"] = record.Temperature;
+            founDataRows[0]["DateTime"] = record.DateTime;
+            founDataRows[0]["Direction"] = record.Direction;
+            founDataRows[0]["Event"] = record.Event;
+            founDataRows[0]["GPSValid"] = record.GPSValid;
+        }
+
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            //dt.WriteXml(xmlFile);
+            dt.WriteXml(xmlFile);
             totalDisplayRowsNumberThread.Abort();
             base.OnFormClosing(e);
         }
