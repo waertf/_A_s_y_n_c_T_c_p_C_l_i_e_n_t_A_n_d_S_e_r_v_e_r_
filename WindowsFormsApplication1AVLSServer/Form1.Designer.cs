@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.ID = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.GPSValid = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.DateTime = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
@@ -39,7 +40,6 @@
             this.Status = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.Event = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
             this.Message = new DataGridViewAutoFilter.DataGridViewAutoFilterTextBoxColumn();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,6 +66,14 @@
             this.dataGridView1.Size = new System.Drawing.Size(713, 358);
             this.dataGridView1.TabIndex = 0;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Location = new System.Drawing.Point(0, 336);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(713, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
             // ID
             // 
             this.ID.DataPropertyName = "ID";
@@ -82,7 +90,8 @@
             this.GPSValid.Name = "GPSValid";
             this.GPSValid.ReadOnly = true;
             this.GPSValid.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.GPSValid.Width = 90;
+            this.GPSValid.Visible = false;
+            this.GPSValid.Width = 75;
             // 
             // DateTime
             // 
@@ -127,7 +136,8 @@
             this.Temperature.Name = "Temperature";
             this.Temperature.ReadOnly = true;
             this.Temperature.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Temperature.Width = 104;
+            this.Temperature.Visible = false;
+            this.Temperature.Width = 89;
             // 
             // Status
             // 
@@ -136,7 +146,8 @@
             this.Status.Name = "Status";
             this.Status.ReadOnly = true;
             this.Status.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Status.Width = 72;
+            this.Status.Visible = false;
+            this.Status.Width = 57;
             // 
             // Event
             // 
@@ -154,15 +165,7 @@
             this.Message.Name = "Message";
             this.Message.ReadOnly = true;
             this.Message.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Message.Width = 69;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 336);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(713, 22);
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
+            this.Message.Width = 84;
             // 
             // Form1
             // 
