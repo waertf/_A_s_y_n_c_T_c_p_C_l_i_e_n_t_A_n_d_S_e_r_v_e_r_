@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Configuration;
 using System.Threading;
-using Chilkat;
+using Gurock.SmartInspect;
 
 
 namespace AVLSServer
@@ -57,7 +57,8 @@ namespace AVLSServer
         static bool port7000reset, port6002reset,port7000reconnect;
         static void Main(string[] args)
         {
-
+            SiAuto.Si.Enabled = true;
+            SiAuto.Si.Level = Level.Debug;
             port7000reconnect = true;
             if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
             {
@@ -74,7 +75,8 @@ namespace AVLSServer
             
             tcpListener6002.Start();
             tcpListener7000.Start();
-            Console.WriteLine("waiting for connect...");
+            //Console.WriteLine("waiting for connect...");
+            SiAuto.Main.LogText(Level.Debug,"waiting for connect","");
             while (true)
             {
                 if (client7000t == null)
@@ -116,7 +118,8 @@ namespace AVLSServer
                     IPEndPoint)client7000.Client.RemoteEndPoint).Port.ToString();
                 netStream7000 = client7000.GetStream();
                 port7000reset = false;
-                Console.WriteLine(client7000Address + ":7000 has connected");
+                //Console.WriteLine(client7000Address + ":7000 has connected");
+                SiAuto.Main.LogText(Level.Debug, "7000 connected", client7000Address);
             }
             if (port6002reset)
             {
@@ -125,7 +128,8 @@ namespace AVLSServer
                     IPEndPoint)client6002.Client.RemoteEndPoint).Address.ToString()).ToString();
                  netStream6002 = client6002.GetStream();
                 port6002reset = false;
-                Console.WriteLine(client6002Address + ":6002 has connected");
+                //Console.WriteLine(client6002Address + ":6002 has connected");
+                SiAuto.Main.LogText(Level.Debug, "6002 connected", client6002Address);
             }
             
             if (reader == null)
@@ -155,7 +159,8 @@ namespace AVLSServer
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(client6002Address + ":6002 has disconnected");
+                            //Console.WriteLine(client6002Address + ":6002 has disconnected");
+                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
                             netStream6002.Close();
                             client6002.Close();
                             client6002t = null;
@@ -178,7 +183,8 @@ namespace AVLSServer
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        //Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        SiAuto.Main.LogText(Level.Debug, "7000 has disconnected", client7000Address);
                         netStream7000.Close();
                         client7000.Close();
                         client7000t  =null;
@@ -189,7 +195,8 @@ namespace AVLSServer
 
                     if (message == null)
                     {
-                        Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        //Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        SiAuto.Main.LogText(Level.Debug, "7000 has disconnected", client7000Address);
                         netStream7000.Close();
                         client7000.Close();
                         client7000t = null;
@@ -418,10 +425,12 @@ namespace AVLSServer
                         try
                         {
                             netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                            SiAuto.Main.LogText(Level.Debug, "SendTo6002PackageLength", packageSendTo6002.Length.ToString());
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(client6002Address + ":6002 has disconnected");
+                            //Console.WriteLine(client6002Address + ":6002 has disconnected");
+                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
                             netStream6002.Close();
                             client6002.Close();
                             client6002t = null;
