@@ -213,7 +213,7 @@ namespace WindowsFormsApplication1AVLSServer
          {
              //Console.WriteLine("+DealTheClient");
              Client clientState = (Client)state;
-
+             Chilkat.Xml doc = new Chilkat.Xml();
 
 
              if (port7000reset)
@@ -235,15 +235,8 @@ namespace WindowsFormsApplication1AVLSServer
                  netStream6002 = client6002.GetStream();
                  port6002reset = false;
                  Console.WriteLine(client6002Address + ":6002 has connected");
-             }
+                 #region resend package to 6002 from bin.xml
 
-             if (reader == null)
-             {
-                 reader = new StreamReader(netStream7000);
-             }
-             {
-                 Chilkat.Xml doc = new Chilkat.Xml();
-                 string test = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                  if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml"))
                  {
 
@@ -265,6 +258,7 @@ namespace WindowsFormsApplication1AVLSServer
                          catch (Exception ex)
                          {
                              Console.WriteLine(client6002Address + ":6002 has disconnected");
+                             
                              netStream6002.Close();
                              client6002.Close();
                              client6002t = null;
@@ -276,6 +270,17 @@ namespace WindowsFormsApplication1AVLSServer
 
                      }
                  }
+                 #endregion resend package to 6002 from bin.xml
+                 
+             }
+
+             if (reader == null)
+             {
+                 reader = new StreamReader(netStream7000);
+             }
+             {
+                 
+                
                  uint message7000Counter = 0;
                  int idCounter = 0;
                  while (true)
