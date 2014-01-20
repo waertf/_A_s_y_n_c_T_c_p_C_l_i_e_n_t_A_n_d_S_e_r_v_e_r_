@@ -65,6 +65,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ChilkatDotNet2, Version=9.4.1.0, Culture=neutral, PublicKeyToken=eb5fc1fc52ef09bd, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\RichardDOC\Downloads\ChilkatDotNet2-9.4.1-x64\ChilkatDotNet2-9.4.1-x64\ChilkatDotNet2.dll</HintPath>
+    </Reference>
     <Reference Include="DataGridViewAutoFilter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\RichardDOC\Downloads\DataGridViewAutoFilter\DataGridViewAutoFilter\CS\DataGridViewAutoFilter\DataGridViewAutoFilter\bin\Release\DataGridViewAutoFilter.dll</HintPath>
