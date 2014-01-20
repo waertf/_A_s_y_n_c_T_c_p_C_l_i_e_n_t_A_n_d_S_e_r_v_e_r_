@@ -242,6 +242,40 @@ namespace WindowsFormsApplication1AVLSServer
                  reader = new StreamReader(netStream7000);
              }
              {
+                 Chilkat.Xml doc = new Chilkat.Xml();
+                 string test = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                 if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml"))
+                 {
+
+                     doc.Encoding = "iso-8859-1";
+                     doc.Standalone = true;
+                     doc.Tag = "root";
+                     doc.SaveXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
+                 }
+                 else
+                 {
+                     doc.LoadXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
+                     for (int i = 0; i < doc.NumChildren - 1; i++)
+                     {
+                         byte[] packageSendTo6002 = HexToByte(doc.GetChildContentByIndex(i));
+                         try
+                         {
+                             netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                         }
+                         catch (Exception ex)
+                         {
+                             Console.WriteLine(client6002Address + ":6002 has disconnected");
+                             netStream6002.Close();
+                             client6002.Close();
+                             client6002t = null;
+                             stopEvent.Set();
+                             break;
+                         }
+                         if (netStream6002 != null)
+                             netStream6002.Flush();
+
+                     }
+                 }
                  uint message7000Counter = 0;
                  int idCounter = 0;
                  while (true)
@@ -496,6 +530,20 @@ namespace WindowsFormsApplication1AVLSServer
                          #endregion write to memorystream
 
                          byte[] packageSendTo6002 = m.ToArray();
+                         doc.LoadXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
+                         bool xFound = doc.SearchForTag2(null, recvReportPacket.ID);
+                         if (xFound)
+                         {
+                             //doc.UpdateChildContent(recvReportPacket.ID, ); //error use
+                             doc.Content = ToHexString(packageSendTo6002);
+                             doc.GetRoot2();
+                         }
+                         else
+                         {
+                             doc.NewChild2(recvReportPacket.ID, ToHexString(packageSendTo6002));
+                             //doc.NewChild2(recvReportPacket.ID, "1");
+                         }
+                         doc.SaveXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
                          try
                          {
                              netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
@@ -527,7 +575,30 @@ namespace WindowsFormsApplication1AVLSServer
              }
              //Console.WriteLine("-DealTheClient");
          }
-          
+          public  string ToHexString(byte[] bytes) // 0xae00cf => "AE00CF "
+          {
+              string hexString = string.Empty;
+              if (bytes != null)
+              {
+                  StringBuilder strB = new StringBuilder();
+
+                  for (int i = 0; i < bytes.Length; i++)
+                  {
+                      strB.Append(bytes[i].ToString("X2"));
+                  }
+                  hexString = strB.ToString();
+              }
+              return hexString;
+          }
+          private  byte[] HexToByte(string hexString)
+          {
+              byte[] returnBytes = new byte[hexString.Length / 2];
+              for (int i = 0; i < returnBytes.Length; i++)
+              {
+                  returnBytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+              }
+              return returnBytes;
+          }
           private void Form1_Load(object sender, EventArgs e)
           {
               dataGridView1.VirtualMode = true;
