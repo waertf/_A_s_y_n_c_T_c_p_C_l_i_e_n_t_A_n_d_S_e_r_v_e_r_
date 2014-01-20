@@ -72,7 +72,10 @@ namespace WindowsFormsApplication1AVLSServer
         public Form1()
         {
             InitializeComponent();
-
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.MaximumSize = Screen.PrimaryScreen.WorkingArea.Size;
+            this.Load += new EventHandler(Form1_Load);
             //DateTime time = System.DateTime.ParseExact(System.DateTime.UtcNow.ToString("yyyyMMddHHmmss"), "yyyyMMddHHmmss", CultureInfo.InvariantCulture,
                              //DateTimeStyles.AssumeUniversal);
             //Record record = new Record();
@@ -112,8 +115,16 @@ namespace WindowsFormsApplication1AVLSServer
             */
             //dt = ConvertToDatatable(records);
             
-            dataSource = new BindingSource(dt, null);
-            dataGridView1.DataSource = dataSource;
+            //dataSource = new BindingSource(dt, null);
+            //dataGridView1.DataSource = dataSource;
+
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dataGridView1.AllowUserToResizeColumns = false;
+            dataGridView1.AllowUserToResizeRows = false;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dataGridView1.AutoGenerateColumns = false;
 
             dataGridView1.DataBindingComplete += new DataGridViewBindingCompleteEventHandler(dataGridView1_DataBindingComplete);
             this.Shown += new EventHandler(Form1_Shown);
@@ -143,7 +154,7 @@ namespace WindowsFormsApplication1AVLSServer
                   {
                       string test = dataGridView1.RowCount.ToString();
                       this.UIThread(() => this.Text = "Total number : "+test);
-                      Thread.Sleep(300);
+                      Thread.Sleep(30);
                   }
               });
             totalDisplayRowsNumberThread.Start();
@@ -511,11 +522,94 @@ namespace WindowsFormsApplication1AVLSServer
                      //Console.WriteLine("-------------------------------------------");
 
 
-                     Thread.Sleep(300);
+                     Thread.Sleep(30);
                  }
              }
              //Console.WriteLine("-DealTheClient");
          }
+          
+          private void Form1_Load(object sender, EventArgs e)
+          {
+              dataGridView1.VirtualMode = true;
+              this.dataGridView1.CellValueNeeded += new DataGridViewCellValueEventHandler(dataGridView1_CellValueNeeded);
+              this.dataGridView1.RowCount = 10000;
+              dataSource = new BindingSource(dt, null);
+              dataGridView1.DataSource = dataSource;
+              
+          }
+          // Declare an ArrayList to serve as the data store. 
+          private System.Collections.ArrayList customers =
+              new System.Collections.ArrayList();
+
+          // Declare a Customer object to store data for a row being edited.
+          private Record customerInEdit;
+
+          // Declare a variable to store the index of a row being edited. 
+          // A value of -1 indicates that there is no row currently in edit. 
+          private int rowInEdit = -1;
+
+          // Declare a variable to indicate the commit scope. 
+          // Set this value to false to use cell-level commit scope. 
+          private bool rowScopeCommit = true;
+          private Record[] yourItems = new Record[10000];
+
+          private Record GetYourItem(int index)
+          {
+              if (yourItems[index] == null)
+              {
+                  yourItems[index] = LoadYourItem(index);
+              }
+              return yourItems[index];
+          }
+
+          private Record LoadYourItem(int index)
+          {
+              return new Record();
+          }
+
+          void dataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+          {
+              // If this is the row for new records, no values are needed.
+              if (e.RowIndex == this.dataGridView1.RowCount - 1) return;
+
+              Record customerTmp = GetYourItem(e.RowIndex);
+
+              // Set the cell value to paint using the Customer object retrieved.
+              switch (this.dataGridView1.Columns[e.ColumnIndex].Name)
+              {
+                  case "DateTime":
+                      e.Value = customerTmp.DateTime;
+                      break;
+
+                  case "Direction":
+                      e.Value = customerTmp.Direction;
+                      break;
+                  case "Event":
+                      e.Value = customerTmp.Event;
+                      break;
+                  case "GPSValid":
+                      e.Value = customerTmp.GPSValid;
+                      break;
+                  case "ID":
+                      e.Value = customerTmp.ID;
+                      break;
+                  case "Lat_Lon":
+                      e.Value = customerTmp.Lat_Lon;
+                      break;
+                  case "Message":
+                      e.Value = customerTmp.Message;
+                      break;
+                  case "Speed":
+                      e.Value = customerTmp.Speed;
+                      break;
+                  case "Status":
+                      e.Value = customerTmp.Status;
+                      break;
+                  case "Temperature":
+                      e.Value = customerTmp.Temperature;
+                      break;
+              }
+          }
           byte[] ByteCountBigEndian(int a)
          {
              byte[] b = BitConverter.GetBytes(a);
@@ -549,7 +643,7 @@ namespace WindowsFormsApplication1AVLSServer
                 //add to table
                 Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
                 addThread.Start();
-                this.UIThread(() => dataGridView1.Refresh());
+                //this.UIThread(() => dataGridView1.Refresh());
             }
             else
             {
@@ -564,18 +658,33 @@ namespace WindowsFormsApplication1AVLSServer
 
         private void ModifyTable( DataRow[] founDataRows,  Record record)
         {
+          
             founDataRows[0].BeginEdit();
             founDataRows[0]["Lat_Lon"] = record.Lat_Lon;
             founDataRows[0]["Message"] = record.Message;
             founDataRows[0]["Speed"] = record.Speed;
             founDataRows[0]["Status"] = record.Status;
             founDataRows[0]["Temperature"] = record.Temperature;
-            founDataRows[0]["DateTime"] = System.DateTime.Now.ToString("s");
+            founDataRows[0]["DateTime"] = record.DateTime;
             founDataRows[0]["Direction"] = record.Direction;
             founDataRows[0]["Event"] = record.Event;
             founDataRows[0]["GPSValid"] = record.GPSValid;
             founDataRows[0].EndEdit();
-            dataGridView1.Refresh();
+            #region refreshDataGridVeiw
+            Thread refreshDataGridVeiw = new System.Threading.Thread
+              (delegate()
+              {
+                  //Random rand = new Random();
+                  while (true)
+                  {
+                      dataGridView1.SuspendLayout();
+                      Thread.Sleep(5000);
+                      dataGridView1.ResumeLayout();
+                  }
+              });
+            //refreshDataGridVeiw.Start();
+            #endregion refreshDataGridVeiw
+            
         }
 
 
@@ -608,6 +717,7 @@ namespace WindowsFormsApplication1AVLSServer
         {
             Size size = new Size(dataGridView1.Width, dataGridView1.Height);
             this.Size = size;
+            
         }
 
         
