@@ -106,7 +106,7 @@ namespace AVLSServer
         {
             //Console.WriteLine("+DealTheClient");
             Client clientState = (Client) state;
-
+            Chilkat.Xml doc = new Chilkat.Xml(); ;
             
 
             if (port7000reset)
@@ -130,15 +130,8 @@ namespace AVLSServer
                 port6002reset = false;
                 //Console.WriteLine(client6002Address + ":6002 has connected");
                 SiAuto.Main.LogText(Level.Debug, "6002 connected", client6002Address);
-            }
-            
-            if (reader == null)
-            {
-                reader = new StreamReader(netStream7000);
-            }
-            {
-                Chilkat.Xml doc = new Chilkat.Xml();
-                string test = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                #region resend package to 6002 from bin.xml
+                
                 if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml"))
                 {
 
@@ -150,7 +143,7 @@ namespace AVLSServer
                 else
                 {
                     doc.LoadXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
-                    for (int i = 0; i < doc.NumChildren-1; i++)
+                    for (int i = 0; i < doc.NumChildren - 1; i++)
                     {
                         byte[] packageSendTo6002 = HexToByte(doc.GetChildContentByIndex(i));
                         try
@@ -167,11 +160,21 @@ namespace AVLSServer
                             stopEvent.Set();
                             break;
                         }
-                        if(netStream6002!=null)
+                        if (netStream6002 != null)
                             netStream6002.Flush();
-                        
+
                     }
                 }
+                #endregion resend package to 6002 from bin.xml
+                SiAuto.Main.LogText(Level.Debug, "send package from xml to 6002", client6002Address);
+            }
+            
+            if (reader == null)
+            {
+                reader = new StreamReader(netStream7000);
+            }
+            {
+                
                 uint message7000Counter = 0;
                 int idCounter = 0;
                 while (true)
