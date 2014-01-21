@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Configuration;
 using System.Threading;
@@ -57,8 +58,25 @@ namespace AVLSServer
         static bool port7000reset, port6002reset,port7000reconnect;
         static void Main(string[] args)
         {
+            SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);//detect when console be closed
+            #region catchCloseEvent
+            Thread catchCloseEvent = new System.Threading.Thread
+              (delegate()
+              {
+
+                  while (!isclosing)
+                  {
+                      Thread.Sleep(1000);
+                  }
+                  Environment.Exit(0);
+
+              });
+            catchCloseEvent.Start();
+            #endregion totalDisplayRowsNumberThread
             SiAuto.Si.Enabled = true;
             SiAuto.Si.Level = Level.Debug;
+            SiAuto.Si.Connections = @"file(filename=" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil,rotate=weekly,append=true,maxparts=5)";
+            SiAuto.Main.LogText(Level.Debug, "waiting for connect", "");
             port7000reconnect = true;
             if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
             {
@@ -75,8 +93,7 @@ namespace AVLSServer
             
             tcpListener6002.Start();
             tcpListener7000.Start();
-            Console.WriteLine("waiting for connect...");
-            SiAuto.Main.LogText(Level.Debug,"waiting for connect","");
+            Console.WriteLine(DateTime.Now+":"+"waiting for connect...");
             while (true)
             {
                 if (client7000t == null)
@@ -84,13 +101,13 @@ namespace AVLSServer
                     client7000t = tcpListener7000.AcceptTcpClient();
                     port7000reset = true;
                 }
-                //Console.WriteLine("tcpListener7000.AcceptTcpClient");
+                //Console.WriteLine(DateTime.Now+":"+"tcpListener7000.AcceptTcpClient");
                 if (client6002t == null)
                 {
                     client6002t = tcpListener6002.AcceptTcpClient();
                     port6002reset = true;
                 }
-                //Console.WriteLine("tcpListener6002.AcceptTcpClient");
+                //Console.WriteLine(DateTime.Now+":"+"tcpListener6002.AcceptTcpClient");
                 stopEvent.Reset();
                 ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002t,client7000t));
                 stopEvent.WaitOne();
@@ -104,7 +121,7 @@ namespace AVLSServer
         static StreamReader reader = null;
         private static void DealTheClient(object state)
         {
-            //Console.WriteLine("+DealTheClient");
+            //Console.WriteLine(DateTime.Now+":"+"+DealTheClient");
             Client clientState = (Client) state;
             Chilkat.Xml doc = new Chilkat.Xml(); ;
             
@@ -118,7 +135,7 @@ namespace AVLSServer
                     IPEndPoint)client7000.Client.RemoteEndPoint).Port.ToString();
                 netStream7000 = client7000.GetStream();
                 port7000reset = false;
-                Console.WriteLine(client7000Address + ":7000 has connected");
+                Console.WriteLine(DateTime.Now+":"+client7000Address + ":7000 has connected");
                 SiAuto.Main.LogText(Level.Debug, "7000 connected", client7000Address);
             }
             if (port6002reset)
@@ -128,7 +145,7 @@ namespace AVLSServer
                     IPEndPoint)client6002.Client.RemoteEndPoint).Address.ToString()).ToString();
                  netStream6002 = client6002.GetStream();
                 port6002reset = false;
-                Console.WriteLine(client6002Address + ":6002 has connected");
+                Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has connected");
                 SiAuto.Main.LogText(Level.Debug, "6002 connected", client6002Address);
                 #region resend package to 6002 from bin.xml
                 
@@ -152,7 +169,7 @@ namespace AVLSServer
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(client6002Address + ":6002 has disconnected");
+                            Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
                             SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
                             netStream6002.Close();
                             client6002.Close();
@@ -186,7 +203,7 @@ namespace AVLSServer
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        Console.WriteLine(DateTime.Now+":"+client7000Address + ":7000 has disconnected");
                         SiAuto.Main.LogText(Level.Debug, "7000 has disconnected", client7000Address);
                         netStream7000.Close();
                         client7000.Close();
@@ -198,7 +215,7 @@ namespace AVLSServer
 
                     if (message == null)
                     {
-                        Console.WriteLine(client7000Address + ":7000 has disconnected");
+                        Console.WriteLine(DateTime.Now+":"+client7000Address + ":7000 has disconnected");
                         SiAuto.Main.LogText(Level.Debug, "7000 has disconnected", client7000Address);
                         netStream7000.Close();
                         client7000.Close();
@@ -208,7 +225,7 @@ namespace AVLSServer
                     }
 
                     message7000Counter++;
-                    //Console.WriteLine(client7000Address+String.Format(" >> [{0}] Message received: {1}", message7000Counter, message));
+                    //Console.WriteLine(DateTime.Now+":"+client7000Address+String.Format(" >> [{0}] Message received: {1}", message7000Counter, message));
                     string[] stringSeparators = new string[] { ",","%%" };
                     string[] receiveStrings = message.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
                     int counter = 0;
@@ -216,7 +233,7 @@ namespace AVLSServer
                     foreach (var receiveString in receiveStrings)
                     {
                         
-                        //Console.WriteLine(counter +":"+receiveString);
+                        //Console.WriteLine(DateTime.Now+":"+counter +":"+receiveString);
                         switch (counter)
                         {
                             case 0:
@@ -432,7 +449,7 @@ namespace AVLSServer
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(client6002Address + ":6002 has disconnected");
+                            Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
                             SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
                             netStream6002.Close();
                             client6002.Close();
@@ -456,7 +473,7 @@ namespace AVLSServer
                     Thread.Sleep(1);
                 }
             }
-            //Console.WriteLine("-DealTheClient");
+            //Console.WriteLine(DateTime.Now+":"+"-DealTheClient");
         }
         static byte[] ByteCountBigEndian(int a)
         {
@@ -506,6 +523,114 @@ namespace AVLSServer
             }
             return returnBytes;
         }
+        private static bool isclosing = false;
+        private static bool ConsoleCtrlCheck(CtrlTypes ctrlType)
+        {
+
+            // Put your own handler here
+
+            switch (ctrlType)
+            {
+
+                case CtrlTypes.CTRL_C_EVENT:
+
+                    isclosing = true;
+
+                    Console.WriteLine("CTRL+C received!");
+                    SiAuto.Main.LogText(Level.Debug, "Closing", "CTRL+C received!");
+                    break;
+
+
+
+                case CtrlTypes.CTRL_BREAK_EVENT:
+
+                    isclosing = true;
+
+                    Console.WriteLine("CTRL+BREAK received!");
+                    SiAuto.Main.LogText(Level.Debug, "Closing", "CTRL+BREAK received!");
+                    break;
+
+
+
+                case CtrlTypes.CTRL_CLOSE_EVENT:
+
+                    isclosing = true;
+
+                    Console.WriteLine("Program being closed!");
+                    SiAuto.Main.LogText(Level.Debug, "Closing", "Program being closed!");
+                    break;
+
+
+
+                case CtrlTypes.CTRL_LOGOFF_EVENT:
+
+                case CtrlTypes.CTRL_SHUTDOWN_EVENT:
+
+                    isclosing = true;
+
+                    Console.WriteLine("User is logging off!");
+                    SiAuto.Main.LogText(Level.Debug, "Closing", "User is logging off!");
+                    break;
+
+
+
+            }
+
+            return true;
+
+        }
+
+
+
+
+
+
+
+        #region unmanaged
+
+        // Declare the SetConsoleCtrlHandler function
+
+        // as external and receiving a delegate.
+
+
+
+        [DllImport("Kernel32")]
+
+        public static extern bool SetConsoleCtrlHandler(HandlerRoutine Handler, bool Add);
+
+
+
+        // A delegate type to be used as the handler routine
+
+        // for SetConsoleCtrlHandler.
+
+        public delegate bool HandlerRoutine(CtrlTypes CtrlType);
+
+
+
+        // An enumerated type for the control messages
+
+        // sent to the handler routine.
+
+        public enum CtrlTypes
+        {
+
+            CTRL_C_EVENT = 0,
+
+            CTRL_BREAK_EVENT,
+
+            CTRL_CLOSE_EVENT,
+
+            CTRL_LOGOFF_EVENT = 5,
+
+            CTRL_SHUTDOWN_EVENT
+
+        }
+
+
+
+        #endregion
+
     }
 }
 namespace netduino
