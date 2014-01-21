@@ -72,7 +72,7 @@ namespace AVLSServer
 
               });
             catchCloseEvent.Start();
-            #endregion totalDisplayRowsNumberThread
+            #endregion catchCloseEvent
             SiAuto.Si.Enabled = true;
             SiAuto.Si.Level = Level.Debug;
             SiAuto.Si.Connections = @"file(filename=" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil,rotate=weekly,append=true,maxparts=5)";
@@ -119,9 +119,26 @@ namespace AVLSServer
         static string client7000Address,client7000Port, client6002Address;
         static NetworkStream netStream7000, netStream6002;
         static StreamReader reader = null;
+        static bool sendingTo6002 = false;
         private static void DealTheClient(object state)
         {
             //Console.WriteLine(DateTime.Now+":"+"+DealTheClient");
+            #region checkSendingTo6006
+            Thread checkSendingTo6006 = new System.Threading.Thread
+              (delegate()
+              {
+
+                  while (true)
+                  {
+                      
+                      if(sendingTo6002)
+                      { SiAuto.Main.LogText(Level.Debug, "SendingPackageTo6002", DateTime.Now.ToString(CultureInfo.InvariantCulture)); }
+                      Thread.Sleep(60*1000);
+                  }
+                  
+              });
+            checkSendingTo6006.Start();
+            #endregion checkSendingTo6006
             Client clientState = (Client) state;
             Chilkat.Xml doc = new Chilkat.Xml(); ;
             
@@ -166,11 +183,13 @@ namespace AVLSServer
                         try
                         {
                             netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                            sendingTo6002 = true;
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
                             SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
+                            sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
                             client6002t = null;
@@ -445,12 +464,14 @@ namespace AVLSServer
                         try
                         {
                             netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
-                            SiAuto.Main.LogText(Level.Debug, "SendTo6002PackageLength", packageSendTo6002.Length.ToString());
+                            
+                            sendingTo6002 = true;
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
                             SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
+                            sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
                             client6002t = null;
