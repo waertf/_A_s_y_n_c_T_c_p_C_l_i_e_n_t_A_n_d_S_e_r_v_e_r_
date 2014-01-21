@@ -188,7 +188,7 @@ namespace AVLSServer
                         catch (Exception ex)
                         {
                             Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
-                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
+                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", ex.Message);
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
@@ -470,7 +470,7 @@ namespace AVLSServer
                         catch (Exception ex)
                         {
                             Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
-                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", client6002Address);
+                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", ex.Message);
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
