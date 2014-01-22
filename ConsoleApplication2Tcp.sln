@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1AVSLPack
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Detect_Console_Application_Exit2", "Detect_Console_Application_Exit2\Detect_Console_Application_Exit2.csproj", "{49627C19-F467-4791-A6F9-A4678F0EB023}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVLSServerRadControls", "AVLSServerRadControls\AVLSServerRadControls.csproj", "{B6472B8B-DE24-4693-84AB-19F9E28328D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,14 @@ Global
 		{49627C19-F467-4791-A6F9-A4678F0EB023}.Release|Any CPU.Build.0 = Release|Any CPU
 		{49627C19-F467-4791-A6F9-A4678F0EB023}.Release|x64.ActiveCfg = Release|Any CPU
 		{49627C19-F467-4791-A6F9-A4678F0EB023}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{B6472B8B-DE24-4693-84AB-19F9E28328D2}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
