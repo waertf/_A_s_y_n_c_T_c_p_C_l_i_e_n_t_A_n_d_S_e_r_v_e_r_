@@ -70,8 +70,9 @@ namespace AVLSServerRadControls
             InitializeComponent();
             this.Load += new EventHandler(Form1_Load);
             this.Shown += new EventHandler(Form1_Shown);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
+
+            //this.MaximizeBox = false;
+            //this.MinimizeBox = false;
             this.MaximumSize = Screen.PrimaryScreen.WorkingArea.Size;
 
             xmlFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\records.xml";
@@ -79,7 +80,7 @@ namespace AVLSServerRadControls
             dt.PrimaryKey = new DataColumn[] { dt.Columns["ID"] };
             if (File.Exists(xmlFile))
                 dt.ReadXml(xmlFile);
-
+            
             radGridView1.AutoGenerateColumns = false;
             avlsServerThread = new Thread(() => AVLSServer());
             avlsServerThread.Start();
@@ -506,7 +507,7 @@ namespace AVLSServerRadControls
                     //Console.WriteLine("-------------------------------------------");
 
 
-                    Thread.Sleep(30);
+                    Thread.Sleep(1);
                 }
             }
             //Console.WriteLine("-DealTheClient");
@@ -517,8 +518,10 @@ namespace AVLSServerRadControls
             if (founDataRows.Length == 0)
             {
                 //add to table
-                Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
-                addThread.Start();
+                //Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
+                //addThread.Start();
+                ClassToDataTable.AddRow(ref dt, record);
+                
                 //this.UIThread(() => dataGridView1.Refresh());
             }
             else
@@ -527,7 +530,14 @@ namespace AVLSServerRadControls
                 //Thread modifyThread = new Thread(()=>ModifyTable( founDataRows, record));
                 //modifyThread.Start();
                 ModifyTable(founDataRows, record);
+                
             }
+            Thread refreshThread = new System.Threading.Thread
+              (delegate()
+              {
+                  radGridView1.Refresh();
+              });
+            //refreshThread.Start();
             //this.UIThread(()=>dataSource.ResetBindings(false));
             //Thread.Sleep(300);
         }
@@ -613,7 +623,7 @@ namespace AVLSServerRadControls
             public static DataTable CreateTable(object objClass)
             {
                 Type objType = objClass.GetType();
-                DataTable result = new DataTable(objType.ToString().Split('.')[1]);
+                DataTable result = new DataTable(objType.ToString().Split('+')[1]);
                 List<PropertyInfo> propertyList = new List<PropertyInfo>(objType.GetProperties());
 
                 foreach (PropertyInfo prop in propertyList)
@@ -627,7 +637,7 @@ namespace AVLSServerRadControls
             public static void AddRow(ref DataTable table, object data)
             {
                 Type objType = data.GetType();
-                string className = objType.ToString().Split('.')[1];
+                string className = objType.ToString().Split('+')[1];
 
                 if (!table.TableName.Equals(className))
                 {

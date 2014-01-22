@@ -56,65 +56,69 @@
             // 
             // radGridView1
             // 
+            this.radGridView1.MasterTemplate.AutoSizeColumnsMode = Telerik.WinControls.UI.GridViewAutoSizeColumnsMode.Fill;
             gridViewTextBoxColumn1.EnableExpressionEditor = false;
             gridViewTextBoxColumn1.FieldName = "ID";
             gridViewTextBoxColumn1.HeaderText = "ID";
             gridViewTextBoxColumn1.Name = "ID";
             gridViewTextBoxColumn1.ReadOnly = true;
-            gridViewTextBoxColumn1.Width = 19;
+            gridViewTextBoxColumn1.Width = 16;
             gridViewTextBoxColumn2.EnableExpressionEditor = false;
             gridViewTextBoxColumn2.FieldName = "DateTime";
             gridViewTextBoxColumn2.HeaderText = "DateTime";
             gridViewTextBoxColumn2.Name = "DateTime";
             gridViewTextBoxColumn2.ReadOnly = true;
-            gridViewTextBoxColumn2.Width = 56;
+            gridViewTextBoxColumn2.Width = 51;
             gridViewTextBoxColumn3.EnableExpressionEditor = false;
             gridViewTextBoxColumn3.FieldName = "Lat_Lon";
             gridViewTextBoxColumn3.HeaderText = "Lat_Lon";
             gridViewTextBoxColumn3.Name = "Lat_Lon";
             gridViewTextBoxColumn3.ReadOnly = true;
-            gridViewTextBoxColumn3.Width = 46;
+            gridViewTextBoxColumn3.Width = 41;
             gridViewTextBoxColumn4.EnableExpressionEditor = false;
             gridViewTextBoxColumn4.FieldName = "Speed";
             gridViewTextBoxColumn4.HeaderText = "Speed";
             gridViewTextBoxColumn4.Name = "Speed";
             gridViewTextBoxColumn4.ReadOnly = true;
-            gridViewTextBoxColumn4.Width = 39;
+            gridViewTextBoxColumn4.Width = 35;
             gridViewTextBoxColumn5.EnableExpressionEditor = false;
             gridViewTextBoxColumn5.FieldName = "Status";
             gridViewTextBoxColumn5.HeaderText = "Status";
+            gridViewTextBoxColumn5.IsVisible = false;
             gridViewTextBoxColumn5.Name = "Status";
             gridViewTextBoxColumn5.ReadOnly = true;
-            gridViewTextBoxColumn5.Width = 39;
+            gridViewTextBoxColumn5.Width = 51;
             gridViewTextBoxColumn6.EnableExpressionEditor = false;
             gridViewTextBoxColumn6.FieldName = "Temperature";
             gridViewTextBoxColumn6.HeaderText = "Temperature";
+            gridViewTextBoxColumn6.IsVisible = false;
             gridViewTextBoxColumn6.Name = "Temperature";
             gridViewTextBoxColumn6.ReadOnly = true;
-            gridViewTextBoxColumn6.Width = 72;
+            gridViewTextBoxColumn6.Width = 101;
             gridViewTextBoxColumn7.EnableExpressionEditor = false;
             gridViewTextBoxColumn7.FieldName = "Direction";
             gridViewTextBoxColumn7.HeaderText = "Direction";
             gridViewTextBoxColumn7.Name = "Direction";
             gridViewTextBoxColumn7.ReadOnly = true;
-            gridViewTextBoxColumn7.Width = 54;
+            gridViewTextBoxColumn7.Width = 48;
             gridViewTextBoxColumn8.EnableExpressionEditor = false;
             gridViewTextBoxColumn8.FieldName = "GPSValid";
             gridViewTextBoxColumn8.HeaderText = "GPSValid";
+            gridViewTextBoxColumn8.IsVisible = false;
             gridViewTextBoxColumn8.Name = "GPSValid";
             gridViewTextBoxColumn8.ReadOnly = true;
-            gridViewTextBoxColumn8.Width = 53;
+            gridViewTextBoxColumn8.Width = 90;
             gridViewTextBoxColumn9.EnableExpressionEditor = false;
             gridViewTextBoxColumn9.FieldName = "Event";
             gridViewTextBoxColumn9.HeaderText = "Event";
             gridViewTextBoxColumn9.Name = "Event";
-            gridViewTextBoxColumn9.Width = 36;
+            gridViewTextBoxColumn9.Width = 32;
             gridViewTextBoxColumn10.EnableExpressionEditor = false;
             gridViewTextBoxColumn10.FieldName = "Message";
             gridViewTextBoxColumn10.HeaderText = "Message";
             gridViewTextBoxColumn10.Name = "Message";
             gridViewTextBoxColumn10.ReadOnly = true;
-            gridViewTextBoxColumn10.Width = 52;
+            gridViewTextBoxColumn10.Width = 46;
             this.radGridView1.MasterTemplate.Columns.AddRange(new Telerik.WinControls.UI.GridViewDataColumn[] {
             gridViewTextBoxColumn1,
             gridViewTextBoxColumn2,
@@ -126,15 +130,16 @@
             gridViewTextBoxColumn8,
             gridViewTextBoxColumn9,
             gridViewTextBoxColumn10});
+            this.radGridView1.MasterTemplate.EnableFiltering = true;
             sortDescriptor1.PropertyName = "column1";
             this.radGridView1.MasterTemplate.SortDescriptors.AddRange(new Telerik.WinControls.Data.SortDescriptor[] {
             sortDescriptor1});
             this.radGridView1.Name = "radGridView1";
+            this.radGridView1.ReadOnly = true;
             this.radGridView1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.radGridView1.Size = new System.Drawing.Size(284, 262);
             this.radGridView1.TabIndex = 0;
             this.radGridView1.Text = "radGridView1";
-            this.radGridView1.VirtualMode = true;
             // 
             // Form1
             // 
