@@ -521,7 +521,10 @@ namespace AVLSServerRadControls
                 //Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
                 //addThread.Start();
                 ClassToDataTable.AddRow(ref dt, record);
-                
+                this.Invoke((MethodInvoker)delegate
+                {
+                    dataSource.ResetBindings(false);
+                });
                 //this.UIThread(() => dataGridView1.Refresh());
             }
             else
@@ -660,7 +663,10 @@ namespace AVLSServerRadControls
                     dRow[prop.Name] = propValue;
                     dRow.EndEdit();
                 }
+                table.BeginLoadData();
                 table.Rows.Add(dRow);
+                table.EndLoadData();
+                
             }
         }
         class Record
