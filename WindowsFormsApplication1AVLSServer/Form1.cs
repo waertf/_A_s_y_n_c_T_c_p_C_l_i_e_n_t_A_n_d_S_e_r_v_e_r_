@@ -575,7 +575,7 @@ namespace WindowsFormsApplication1AVLSServer
                      //Console.WriteLine("-------------------------------------------");
 
 
-                     Thread.Sleep(30);
+                     Thread.Sleep(1);
                  }
              }
              //Console.WriteLine("-DealTheClient");
@@ -717,8 +717,13 @@ namespace WindowsFormsApplication1AVLSServer
             if (founDataRows.Length == 0)
             {
                 //add to table
-                Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
-                addThread.Start();
+                //Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
+                //addThread.Start();
+                ClassToDataTable.AddRow(ref dt, record);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    dataSource.ResetBindings(false);
+                });
                 //this.UIThread(() => dataGridView1.Refresh());
             }
             else
@@ -746,6 +751,7 @@ namespace WindowsFormsApplication1AVLSServer
             founDataRows[0]["Event"] = record.Event;
             founDataRows[0]["GPSValid"] = record.GPSValid;
             founDataRows[0].EndEdit();
+            /*
             #region refreshDataGridVeiw
             Thread refreshDataGridVeiw = new System.Threading.Thread
               (delegate()
@@ -760,7 +766,7 @@ namespace WindowsFormsApplication1AVLSServer
               });
             //refreshDataGridVeiw.Start();
             #endregion refreshDataGridVeiw
-            
+            */
         }
 
 
@@ -925,7 +931,9 @@ namespace WindowsFormsApplication1AVLSServer
                 dRow[prop.Name] = propValue;
                 dRow.EndEdit();
             }
+            table.BeginLoadData();
             table.Rows.Add(dRow);
+            table.EndLoadData();
         }
     }
     class Record
