@@ -125,6 +125,12 @@ namespace WindowsFormsApplication1AVLSServer
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             dataGridView1.AutoGenerateColumns = false;
+            //dataGridView1.RowHeadersVisible = false;
+            dataGridView1.ReadOnly = true;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToOrderColumns = false;
+            this.dataGridView1.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
 
             dataGridView1.DataBindingComplete += new DataGridViewBindingCompleteEventHandler(dataGridView1_DataBindingComplete);
             this.Shown += new EventHandler(Form1_Shown);
@@ -152,9 +158,9 @@ namespace WindowsFormsApplication1AVLSServer
                   Random rand = new Random();
                   while (true)
                   {
-                      string test = dataGridView1.RowCount.ToString();
-                      this.UIThread(() => this.Text = "Total number : "+test);
-                      Thread.Sleep(30);
+                      
+                      this.UIThread(() => this.Text = "Total number : " + dt.Rows.Count.ToString());
+                      Thread.Sleep(3);
                   }
               });
             totalDisplayRowsNumberThread.Start();
@@ -185,6 +191,7 @@ namespace WindowsFormsApplication1AVLSServer
             tcpListener6002.Start();
             tcpListener7000.Start();
             Console.WriteLine("waiting for connect...");
+            this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + "waiting for connect..."+Environment.NewLine);
             while (true)
             {
                 if (client7000t == null)
@@ -226,6 +233,7 @@ namespace WindowsFormsApplication1AVLSServer
                  netStream7000 = client7000.GetStream();
                  port7000reset = false;
                  Console.WriteLine(client7000Address + ":7000 has connected");
+                 this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client7000Address + ":7000 has connected"+Environment.NewLine);
              }
              if (port6002reset)
              {
@@ -235,6 +243,7 @@ namespace WindowsFormsApplication1AVLSServer
                  netStream6002 = client6002.GetStream();
                  port6002reset = false;
                  Console.WriteLine(client6002Address + ":6002 has connected");
+                 this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client6002Address + ":6002 has connected"+Environment.NewLine);
                  #region resend package to 6002 from bin.xml
 
                  if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml"))
@@ -258,7 +267,7 @@ namespace WindowsFormsApplication1AVLSServer
                          catch (Exception ex)
                          {
                              Console.WriteLine(client6002Address + ":6002 has disconnected");
-                             
+                             this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client6002Address + ":6002 has disconnected"+Environment.NewLine);
                              netStream6002.Close();
                              client6002.Close();
                              client6002t = null;
@@ -293,6 +302,7 @@ namespace WindowsFormsApplication1AVLSServer
                      catch (Exception ex)
                      {
                          Console.WriteLine(client7000Address + ":7000 has disconnected");
+                         this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client7000Address + ":7000 has disconnected" + Environment.NewLine);
                          netStream7000.Close();
                          client7000.Close();
                          client7000t = null;
@@ -304,6 +314,8 @@ namespace WindowsFormsApplication1AVLSServer
                      if (message == null)
                      {
                          Console.WriteLine(client7000Address + ":7000 has disconnected");
+                         this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client7000Address + ":7000 has disconnected" + Environment.NewLine);
+                         
                          netStream7000.Close();
                          client7000.Close();
                          client7000t = null;
@@ -374,8 +386,9 @@ namespace WindowsFormsApplication1AVLSServer
                          }
                          counter++;
                      }
-                     Thread addOrModifyTableThread = new Thread(()=>AddOrModifyTable(dt, record));
-                     addOrModifyTableThread.Start();
+                     //Thread addOrModifyTableThread = new Thread(()=>AddOrModifyTable(dt, record));
+                     //addOrModifyTableThread.Start();
+                     AddOrModifyTable(dt, record);
                      //byte[] packageSendTo6002;
                      using (var m = new MemoryStream())
                      {
@@ -556,6 +569,8 @@ namespace WindowsFormsApplication1AVLSServer
                          catch (Exception ex)
                          {
                              Console.WriteLine(client6002Address + ":6002 has disconnected");
+                             this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client6002Address + ":6002 has disconnected" + Environment.NewLine);
+                         
                              netStream6002.Close();
                              client6002.Close();
                              client6002t = null;
@@ -719,9 +734,10 @@ namespace WindowsFormsApplication1AVLSServer
                 //add to table
                 //Thread addThread = new Thread(() => ClassToDataTable.AddRow(ref dt, record));
                 //addThread.Start();
-                ClassToDataTable.AddRow(ref dt, record);
+                
                 this.Invoke((MethodInvoker)delegate
                 {
+                    ClassToDataTable.AddRow(ref dt, record);
                     dataSource.ResetBindings(false);
                 });
                 //this.UIThread(() => dataGridView1.Refresh());
@@ -751,6 +767,7 @@ namespace WindowsFormsApplication1AVLSServer
             founDataRows[0]["Event"] = record.Event;
             founDataRows[0]["GPSValid"] = record.GPSValid;
             founDataRows[0].EndEdit();
+            //dataGridView1.Refresh();
             /*
             #region refreshDataGridVeiw
             Thread refreshDataGridVeiw = new System.Threading.Thread
