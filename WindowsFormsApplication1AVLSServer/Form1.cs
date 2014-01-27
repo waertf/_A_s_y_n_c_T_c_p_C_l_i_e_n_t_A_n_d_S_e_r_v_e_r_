@@ -123,8 +123,10 @@ namespace WindowsFormsApplication1AVLSServer
             dataGridView1.AllowUserToResizeColumns = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
-            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dataGridView1.AutoGenerateColumns = false;
+            dataGridView1.AutoSize = true;
+            this.AutoSize = true;
             //dataGridView1.RowHeadersVisible = false;
             dataGridView1.ReadOnly = true;
             this.dataGridView1.AllowUserToAddRows = false;
@@ -761,6 +763,7 @@ namespace WindowsFormsApplication1AVLSServer
 
         private void ModifyTable( DataRow[] founDataRows,  Record record)
         {
+            
             dataSource.SuspendBinding();
             founDataRows[0].BeginEdit();
             founDataRows[0]["Lat_Lon"] = record.Lat_Lon;
