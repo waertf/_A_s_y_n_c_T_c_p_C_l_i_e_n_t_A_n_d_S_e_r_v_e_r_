@@ -755,7 +755,7 @@ namespace WindowsFormsApplication1AVLSServer
 
         private void ModifyTable( DataRow[] founDataRows,  Record record)
         {
-          
+            dataSource.SuspendBinding();
             founDataRows[0].BeginEdit();
             founDataRows[0]["Lat_Lon"] = record.Lat_Lon;
             founDataRows[0]["Message"] = record.Message;
@@ -767,6 +767,8 @@ namespace WindowsFormsApplication1AVLSServer
             founDataRows[0]["Event"] = record.Event;
             founDataRows[0]["GPSValid"] = record.GPSValid;
             founDataRows[0].EndEdit();
+            dataSource.ResumeBinding();
+            dataSource.ResetCurrentItem();
             //dataGridView1.Refresh();
             /*
             #region refreshDataGridVeiw
