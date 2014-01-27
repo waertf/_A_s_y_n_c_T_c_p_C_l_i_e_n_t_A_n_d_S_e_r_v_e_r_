@@ -136,6 +136,7 @@ namespace WindowsFormsApplication1AVLSServer
             this.Shown += new EventHandler(Form1_Shown);
             dataGridView1.AutoSize = true;
             dataGridView1.BindingContextChanged += new EventHandler(dataGridView1_BindingContextChanged);
+            dataGridView1.SelectionChanged += new EventHandler(dataGridView1_SelectionChanged);
 
             filterStatusLabel = new ToolStripStatusLabel();
             showAllLabel = new ToolStripStatusLabel();
@@ -170,6 +171,11 @@ namespace WindowsFormsApplication1AVLSServer
             avlsServerThread.Start();
             //AddOrModifyTable( dt,record);
 
+        }
+
+        void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            dataGridView1.ClearSelection();
         }
 
         private void AVLSServer()
