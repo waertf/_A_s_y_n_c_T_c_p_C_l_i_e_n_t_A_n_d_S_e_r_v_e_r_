@@ -321,8 +321,8 @@ namespace WindowsFormsApplication1AVLSServer
 
                      if (message == null)
                      {
-                         Console.WriteLine(client7000Address + ":7000 has disconnected");
-                         this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client7000Address + ":7000 has disconnected" + Environment.NewLine);
+                         Console.WriteLine(client7000Address + ":7000 has disconnected2");
+                         this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client7000Address + ":7000 has disconnected2" + Environment.NewLine);
 
                          netStream7000.Close();
                          client7000.Close();
