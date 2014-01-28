@@ -323,10 +323,11 @@ namespace WindowsFormsApplication1AVLSServer
                      {
                          Console.WriteLine(client7000Address + ":7000 has disconnected");
                          this.UIThread(() => this.textBox1.Text += System.DateTime.Now.ToString() + "   " + client7000Address + ":7000 has disconnected" + Environment.NewLine);
-                         
+
                          netStream7000.Close();
                          client7000.Close();
                          client7000t = null;
+                         reader = null;
                          stopEvent.Set();
                          break;
                      }

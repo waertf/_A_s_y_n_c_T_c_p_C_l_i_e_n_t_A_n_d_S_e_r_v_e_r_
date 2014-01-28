@@ -234,11 +234,12 @@ namespace AVLSServer
 
                     if (message == null)
                     {
-                        Console.WriteLine(DateTime.Now+":"+client7000Address + ":7000 has disconnected");
+                        Console.WriteLine(DateTime.Now + ":" + client7000Address + ":7000 has disconnected");
                         SiAuto.Main.LogText(Level.Debug, "7000 has disconnected", client7000Address);
                         netStream7000.Close();
                         client7000.Close();
                         client7000t = null;
+                        reader = null;
                         stopEvent.Set();
                         break;
                     }
