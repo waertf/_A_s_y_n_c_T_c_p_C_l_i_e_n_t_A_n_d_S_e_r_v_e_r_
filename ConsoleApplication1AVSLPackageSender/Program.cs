@@ -17,9 +17,32 @@ namespace ConsoleApplication1AVSLPackageSender
         static string[] Event = new[] { "181", "182", "175", "0", "-1", "150" };
         static string[] Loc = new[]
         {
-            "N2457.7728E12155.29", "N2506.7122E12154.9096",
-            "N2509.8574E12124.9516","N2507.2636E12153.2788",
-            "N2435.7498E12151.5004"            
+            //24.69203 121.8355
+            "N2441.5218E12150.13",
+            //24.69203 121.83558
+            "N2441.5218E12150.1348",
+            //25.13316 121.74165
+            "N2507.9896E12144.499",
+            //25.16042 121.7341
+            "N2509.6252E12144.046",
+            //25.02105 121.95243
+            "N2501.263E12157.1458"            
+            
+        };
+        static string[] Msg = new[]
+        {
+            //24.69203 121.8355
+            "",
+            //24.69203 121.83558
+            "p_prohibited,"+ConfigurationManager.AppSettings["gid0"]+","+ConfigurationManager.AppSettings["fullname0"],
+            //25.13316 121.74165
+            "patrol_location,"+ConfigurationManager.AppSettings["gid1"]+","+ConfigurationManager.AppSettings["fullname1"],
+            //25.16042 121.7341
+            "p_prohibited,"+ConfigurationManager.AppSettings["gid0"]+","+ConfigurationManager.AppSettings["fullname0"]+";"+
+            "patrol_location,"+ConfigurationManager.AppSettings["gid1"]+","+ConfigurationManager.AppSettings["fullname1"],
+            //25.02105 121.95243
+           "patrol_location,"+ConfigurationManager.AppSettings["gid1"]+","+ConfigurationManager.AppSettings["fullname1"]+";"+            
+            "p_prohibited,"+ConfigurationManager.AppSettings["gid0"]+","+ConfigurationManager.AppSettings["fullname0"]
         };
          static Random rand = new Random();
         private static NetworkStream networkStream;
@@ -46,6 +69,7 @@ namespace ConsoleApplication1AVSLPackageSender
                     string gps = GPSValid[rand.Next(0, GPSValid.Length)];
                     string _event = Event[rand.Next(0, Event.Length)];
                     string loc = Loc[rand.Next(0, Loc.Length)];
+                    string message = Msg[rand.Next(0, Msg.Length)];
                     string package = "%%" + uid + "," +
                               gps + "," +
                               time + "," +
@@ -54,7 +78,8 @@ namespace ConsoleApplication1AVSLPackageSender
                               Dir + "," +
                               Temp + "," +
                               Status + "," +
-                              _event + ",test" + Environment.NewLine;
+                              _event + "," +
+                              message+Environment.NewLine;
                     byte[] sendByte = Encoding.ASCII.GetBytes(package);
                     
                     if (true)
