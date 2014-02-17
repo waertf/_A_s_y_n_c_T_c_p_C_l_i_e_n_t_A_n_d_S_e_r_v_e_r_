@@ -465,7 +465,7 @@ namespace AVLSServer
                         try
                         {
                             netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
-                            
+                            SiAuto.Main.LogText(Level.Debug, recvReportPacket.ID+":send msg to 6002", message);
                             sendingTo6002 = true;
                         }
                         catch (Exception ex)
