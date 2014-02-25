@@ -32,7 +32,7 @@ namespace ConsoleApplication1AVSLPackageSender
         static string[] Msg = new[]
         {
             //24.69203 121.8355
-            "",
+            "test",
             //24.69203 121.83558
             "p_prohibited,"+ConfigurationManager.AppSettings["gid0"]+","+ConfigurationManager.AppSettings["fullname0"],
             //25.13316 121.74165
