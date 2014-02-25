@@ -34,15 +34,15 @@ namespace ConsoleApplication1AVSLPackageSender
             //24.69203 121.8355
             "test",
             //24.69203 121.83558
-            "p_prohibited,"+ConfigurationManager.AppSettings["gid0"]+","+ConfigurationManager.AppSettings["fullname0"],
+            ";p_prohibited#"+ConfigurationManager.AppSettings["gid0"]+"#"+ConfigurationManager.AppSettings["fullname0"],
             //25.13316 121.74165
-            "patrol_location,"+ConfigurationManager.AppSettings["gid1"]+","+ConfigurationManager.AppSettings["fullname1"],
+            ";patrol_location#"+ConfigurationManager.AppSettings["gid1"]+"#"+ConfigurationManager.AppSettings["fullname1"],
             //25.16042 121.7341
-            "p_prohibited,"+ConfigurationManager.AppSettings["gid0"]+","+ConfigurationManager.AppSettings["fullname0"]+";"+
-            "patrol_location,"+ConfigurationManager.AppSettings["gid1"]+","+ConfigurationManager.AppSettings["fullname1"],
+            ";p_prohibited#"+ConfigurationManager.AppSettings["gid0"]+"#"+ConfigurationManager.AppSettings["fullname0"]+";"+
+            "patrol_location#"+ConfigurationManager.AppSettings["gid1"]+"#"+ConfigurationManager.AppSettings["fullname1"],
             //25.02105 121.95243
-           "patrol_location,"+ConfigurationManager.AppSettings["gid1"]+","+ConfigurationManager.AppSettings["fullname1"]+";"+            
-            "p_prohibited,"+ConfigurationManager.AppSettings["gid0"]+","+ConfigurationManager.AppSettings["fullname0"]
+           ";patrol_location#"+ConfigurationManager.AppSettings["gid1"]+"#"+ConfigurationManager.AppSettings["fullname1"]+";"+            
+            "p_prohibited#"+ConfigurationManager.AppSettings["gid0"]+"#"+ConfigurationManager.AppSettings["fullname0"]
         };
          static Random rand = new Random();
         private static NetworkStream networkStream;
