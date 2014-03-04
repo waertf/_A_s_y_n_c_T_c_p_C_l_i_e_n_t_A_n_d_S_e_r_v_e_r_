@@ -42,7 +42,8 @@ namespace ConsoleApplication1AVSLPackageSender
             "patrol_location#"+ConfigurationManager.AppSettings["gid1"]+"#"+ConfigurationManager.AppSettings["fullname1"],
             //25.02105 121.95243
            ";patrol_location#"+ConfigurationManager.AppSettings["gid1"]+"#"+ConfigurationManager.AppSettings["fullname1"]+";"+            
-            "p_prohibited#"+ConfigurationManager.AppSettings["gid0"]+"#"+ConfigurationManager.AppSettings["fullname0"]
+            "p_prohibited#"+ConfigurationManager.AppSettings["gid0"]+"#"+ConfigurationManager.AppSettings["fullname0"],
+            ";stay_over_specific_time"            
         };
          static Random rand = new Random();
         private static NetworkStream networkStream;
