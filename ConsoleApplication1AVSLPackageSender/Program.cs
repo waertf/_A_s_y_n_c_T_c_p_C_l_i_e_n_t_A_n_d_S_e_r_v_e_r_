@@ -81,6 +81,10 @@ namespace ConsoleApplication1AVSLPackageSender
                               Status + "," +
                               _event + "," +
                               message+Environment.NewLine;
+                    if (bool.Parse(ConfigurationManager.AppSettings["debugMsg"]))
+                    {
+                        Console.WriteLine(package);
+                    }
                     byte[] sendByte = Encoding.ASCII.GetBytes(package);
                     
                     if (true)
