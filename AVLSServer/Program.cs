@@ -294,8 +294,8 @@ namespace AVLSServer
                     {
                         string Head = "$CMD_H#";
                         string Tail = "$CMD_T#";
-                        
-                        byte[] headBytes = Encoding.ASCII.GetBytes(Head);
+
+                        byte[] headBytes = Encoding.UTF8.GetBytes(Head);
                         byte[] HeadLength = ByteCountBigEndian(headBytes.Length);
 
                         byte[] Cmd_Type = new byte[]{2} ;
@@ -306,7 +306,7 @@ namespace AVLSServer
                         
                         #region avlsPackageFromPort7000_attach
 
-                        byte[] uid = Encoding.ASCII.GetBytes(recvReportPacket.ID);
+                        byte[] uid = Encoding.UTF8.GetBytes(recvReportPacket.ID);
                         byte[] uidLength = ByteCountBigEndian(uid.Length);
 
                         byte[] statusBytes = new byte[]{0x0A};
@@ -320,13 +320,13 @@ namespace AVLSServer
                         switch (recvReportPacket.GPSValid)
                         {
                             case "A"://valid.
-                                GPSValid = Encoding.ASCII.GetBytes(recvReportPacket.GPSValid);
+                                GPSValid = Encoding.UTF8.GetBytes(recvReportPacket.GPSValid);
                                 break;
                             case "L"://invalid.
-                                GPSValid = Encoding.ASCII.GetBytes(recvReportPacket.GPSValid);
+                                GPSValid = Encoding.UTF8.GetBytes(recvReportPacket.GPSValid);
                                 break;
                             default:
-                                GPSValid = Encoding.ASCII.GetBytes(recvReportPacket.GPSValid);
+                                GPSValid = Encoding.UTF8.GetBytes(recvReportPacket.GPSValid);
                                 break;
                         }
                         byte[] Loc = SendLocBackToWeb(recvReportPacket.Loc);
@@ -344,13 +344,13 @@ namespace AVLSServer
                         byte[] town_Length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
                         byte[] city_Length = new byte[] { 0x00, 0x00, 0x00, 0x00 };
 
-                        byte[] option0 = Encoding.ASCII.GetBytes(recvReportPacket.Temp);
+                        byte[] option0 = Encoding.UTF8.GetBytes(recvReportPacket.Temp);
                         byte[] option0_Length = ByteCountBigEndian(option0.Length);
-                        byte[] option1 = Encoding.ASCII.GetBytes(recvReportPacket.Status);
+                        byte[] option1 = Encoding.UTF8.GetBytes(recvReportPacket.Status);
                         byte[] option1_Length = ByteCountBigEndian(option1.Length);
-                        byte[] option2 = Encoding.ASCII.GetBytes(recvReportPacket.Event);
+                        byte[] option2 = Encoding.UTF8.GetBytes(recvReportPacket.Event);
                         byte[] option2_Length = ByteCountBigEndian(option2.Length);
-                        byte[] option3 = Encoding.ASCII.GetBytes(recvReportPacket.Message);
+                        byte[] option3 = Encoding.UTF8.GetBytes(recvReportPacket.Message);
                         byte[] option3_Length = ByteCountBigEndian(option3.Length);
 
                         byte[] judegs = new byte[]
@@ -400,7 +400,7 @@ namespace AVLSServer
 
                         #endregion avlsPackageFromPort7000_attach
 
-                        byte[] tailBytes = Encoding.ASCII.GetBytes(Tail);
+                        byte[] tailBytes = Encoding.UTF8.GetBytes(Tail);
                         byte[] TailLength = ByteCountBigEndian(tailBytes.Length);
 
                         #region write to memorystream
