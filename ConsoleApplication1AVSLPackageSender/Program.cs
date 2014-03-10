@@ -85,7 +85,7 @@ namespace ConsoleApplication1AVSLPackageSender
                     {
                         Console.WriteLine(package);
                     }
-                    byte[] sendByte = Encoding.ASCII.GetBytes(package);
+                    byte[] sendByte = Encoding.UTF8.GetBytes(package);
                     
                     if (true)
                     {
