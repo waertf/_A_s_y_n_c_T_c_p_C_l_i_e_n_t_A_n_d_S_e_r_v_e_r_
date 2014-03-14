@@ -137,7 +137,7 @@ namespace AVLSServer
                   }
                   
               });
-            checkSendingTo6006.Start();
+            //checkSendingTo6006.Start();
             #endregion checkSendingTo6006
             Client clientState = (Client) state;
             Chilkat.Xml doc = new Chilkat.Xml(); ;
