@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -58,6 +59,7 @@ namespace AVLSServer
         static bool port7000reset, port6002reset,port7000reconnect;
         static void Main(string[] args)
         {
+            Thread.Sleep(5000);
             SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);//detect when console be closed
             #region catchCloseEvent
             Thread catchCloseEvent = new System.Threading.Thread
@@ -77,6 +79,7 @@ namespace AVLSServer
             SiAuto.Si.Level = Level.Debug;
             SiAuto.Si.Connections = @"file(filename=" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil,rotate=weekly,append=true,maxparts=5)";
             SiAuto.Main.LogText(Level.Debug, "waiting for connect", "");
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             port7000reconnect = true;
             if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
             {
@@ -114,6 +117,14 @@ namespace AVLSServer
                 Thread.Sleep(1);
             }
 
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+            if (exception != null)
+                SiAuto.Main.LogError("call restart:" + exception.ToString());
+            Restart();
         }
         static TcpClient client7000, client6002;
         static string client7000Address,client7000Port, client6002Address;
@@ -603,7 +614,18 @@ namespace AVLSServer
         }
 
 
+        private static void Restart()
+        {
+            //Process.Start(AppDomain.CurrentDomain.BaseDirectory + "Client.exe");
 
+            //some time to start the new instance.
+            //Thread.Sleep(2000);
+
+            //Environment.Exit(-1);//Force termination of the current process.
+
+            System.Windows.Forms.Application.Restart();
+            Process.GetCurrentProcess().Kill();
+        }
 
 
 
