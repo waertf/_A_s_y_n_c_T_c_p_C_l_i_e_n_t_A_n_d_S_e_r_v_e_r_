@@ -194,7 +194,12 @@ namespace AVLSServer
                         try
                         {
                             //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                           
                             Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
+                            while (netStream6002.CanWrite.Equals(false))
+                            {
+                                Thread.Sleep(1);
+                            }
                             writeThread.Start();
                             sendingTo6002 = true;
                         }
@@ -477,8 +482,13 @@ namespace AVLSServer
                         doc.SaveXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
                         try
                         {
+                            
                             //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
                             Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
+                            while (netStream6002.CanWrite.Equals(false))
+                            {
+                                Thread.Sleep(1);
+                            }
                             writeThread.Start();
                             SiAuto.Main.LogText(Level.Debug, recvReportPacket.ID + ":send msg to 6002:" + recvReportPacket.Event + ":" + recvReportPacket.Message, message);
                             /*
