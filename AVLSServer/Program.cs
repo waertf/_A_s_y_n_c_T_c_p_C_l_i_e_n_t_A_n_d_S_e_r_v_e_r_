@@ -494,8 +494,8 @@ namespace AVLSServer
                             stopEvent.Set();
                             break;
                         }
-                        if(netStream6002!=null)
-                            netStream6002.Flush();
+                        //if(netStream6002!=null)
+                            //netStream6002.Flush();
                         //Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
                         //writeThread.Start();
                     }
