@@ -77,7 +77,7 @@ namespace AVLSServer
             #endregion catchCloseEvent
             SiAuto.Si.Enabled = true;
             SiAuto.Si.Level = Level.Debug;
-            SiAuto.Si.Connections = @"file(filename=" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil,rotate=weekly,append=true,maxparts=5)";
+            SiAuto.Si.Connections = @"file(filename=" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil,rotate=weekly,append=true,maxparts=5,maxsize=500MB)";
             SiAuto.Main.LogText(Level.Debug, "waiting for connect", "");
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             port7000reconnect = true;
