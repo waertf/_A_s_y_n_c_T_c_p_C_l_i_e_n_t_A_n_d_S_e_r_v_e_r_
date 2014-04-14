@@ -481,6 +481,7 @@ namespace AVLSServer
                             Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
                             writeThread.Start();
                             SiAuto.Main.LogText(Level.Debug, recvReportPacket.ID + ":send msg to 6002:" + recvReportPacket.Event + ":" + recvReportPacket.Message, message);
+                            /*
                             if (recvReportPacket.Event.Equals("150") ||
                                 recvReportPacket.Message.Contains("p_prohibited") ||
                                 recvReportPacket.Message.Contains("patrol_location") ||
@@ -489,7 +490,7 @@ namespace AVLSServer
                                 Console.WriteLine(DateTime.Now.ToString("G"));
                                 Console.WriteLine(message);
                             }
-                            
+                            */
                             sendingTo6002 = true;
                         }
                         catch (Exception ex)
