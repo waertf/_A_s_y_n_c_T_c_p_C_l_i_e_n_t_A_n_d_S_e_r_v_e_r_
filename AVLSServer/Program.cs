@@ -80,7 +80,7 @@ namespace AVLSServer
             //Console.WriteLine(@"file(filename=""" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil\",rotate=weekly,append=true,maxparts=5,maxsize=500MB)");
             SiAuto.Si.Connections = @"file(filename=""" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil\",rotate=weekly,append=true,maxparts=5,maxsize=500MB)";
             SiAuto.Main.LogText(Level.Debug, "waiting for connect", "");
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             port7000reconnect = true;
             if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
             {
@@ -484,13 +484,13 @@ namespace AVLSServer
                         try
                         {
                             
-                            //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                            netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
                             Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
                             while (netStream6002.CanWrite.Equals(false))
                             {
                                 Thread.Sleep(1);
                             }
-                            writeThread.Start();
+                            //writeThread.Start();
                             SiAuto.Main.LogText(Level.Debug, recvReportPacket.ID + ":send msg to 6002:" + recvReportPacket.Event + ":" + recvReportPacket.Message, message);
                             /*
                             if (recvReportPacket.Event.Equals("150") ||
