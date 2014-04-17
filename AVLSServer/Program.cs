@@ -132,6 +132,21 @@ namespace AVLSServer
         static NetworkStream netStream7000, netStream6002;
         static StreamReader reader = null;
         static bool sendingTo6002 = false;
+
+        internal class StateObject
+        {
+            public readonly TcpClient Client;
+            public readonly NetworkStream NetStream;
+            public readonly byte[] PackageBytes;
+
+            public StateObject(TcpClient c, NetworkStream n, byte[] b)
+            {
+                this.Client = c;
+                this.NetStream = n;
+                PackageBytes = new byte[b.Length];
+                Array.Copy(b,PackageBytes,b.Length);
+            }
+        }
         private static void DealTheClient(object state)
         {
             //Console.WriteLine(DateTime.Now+":"+"+DealTheClient");
@@ -196,10 +211,15 @@ namespace AVLSServer
                         {
                             //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
                            
-                            Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
+                            //Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
                             if (netStream6002.CanWrite)
                             {
-                                writeThread.Start();
+                                //writeThread.Start();
+                                StateObject stateObject = new StateObject(client6002,netStream6002,packageSendTo6002);
+                                IAsyncResult result=netStream6002.BeginWrite(packageSendTo6002, 0, packageSendTo6002.Length,
+                                    new AsyncCallback(SendingTo6002Callback), stateObject);
+                                result.AsyncWaitHandle.WaitOne();
+                                //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
                                 sendingTo6002 = true;
                             }
                             
@@ -211,12 +231,24 @@ namespace AVLSServer
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
-                            client6002t = null;
-                            stopEvent.Set();
-                            break;
+                            //client6002t = null;
+                            //stopEvent.Set();
+                            //break;
+                            client6002 = client6002t= tcpListener6002.AcceptTcpClient();
+                            netStream6002 = client6002.GetStream();
+                            if (netStream6002.CanWrite)
+                            {
+                                //writeThread.Start();
+                                StateObject stateObject = new StateObject(client6002, netStream6002, packageSendTo6002);
+                                IAsyncResult result = netStream6002.BeginWrite(packageSendTo6002, 0, packageSendTo6002.Length,
+                                    new AsyncCallback(SendingTo6002Callback), stateObject);
+                                result.AsyncWaitHandle.WaitOne();
+                                //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                                sendingTo6002 = true;
+                            }
                         }
-                        if (netStream6002 != null)
-                            netStream6002.Flush();
+                        //if (netStream6002 != null)
+                            //netStream6002.Flush();
 
                     }
                 }
@@ -486,7 +518,11 @@ namespace AVLSServer
                             //Thread writeThread = new Thread(() => netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length));
                             if (netStream6002.CanWrite)
                             {
-                                netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                                //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                                StateObject stateObject = new StateObject(client6002, netStream6002, packageSendTo6002);
+                                IAsyncResult result = netStream6002.BeginWrite(packageSendTo6002, 0, packageSendTo6002.Length,
+                                    new AsyncCallback(SendingTo6002Callback), stateObject);
+                                result.AsyncWaitHandle.WaitOne();
                                 SiAuto.Main.LogText(Level.Debug, recvReportPacket.ID + ":send msg to 6002:" + recvReportPacket.Event + ":" + recvReportPacket.Message, message);
                                 sendingTo6002 = true;
                             }
@@ -509,14 +545,26 @@ namespace AVLSServer
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
+                            Console.WriteLine(DateTime.Now + ":" + client6002Address + ":6002 has disconnected");
                             SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", ex.Message);
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
-                            client6002t = null;
-                            stopEvent.Set();
-                            break;
+                            //client6002t = null;
+                            //stopEvent.Set();
+                            //break;
+                            client6002 = client6002t=tcpListener6002.AcceptTcpClient();
+                            netStream6002 = client6002.GetStream();
+                            if (netStream6002.CanWrite)
+                            {
+                                //writeThread.Start();
+                                StateObject stateObject = new StateObject(client6002, netStream6002, packageSendTo6002);
+                                IAsyncResult result = netStream6002.BeginWrite(packageSendTo6002, 0, packageSendTo6002.Length,
+                                    new AsyncCallback(SendingTo6002Callback), stateObject);
+                                result.AsyncWaitHandle.WaitOne();
+                                //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                                sendingTo6002 = true;
+                            }
                         }
                         //if(netStream6002!=null)
                             //netStream6002.Flush();
@@ -535,6 +583,39 @@ namespace AVLSServer
                 }
             }
             //Console.WriteLine(DateTime.Now+":"+"-DealTheClient");
+        }
+
+        static void SendingTo6002Callback(IAsyncResult ar)
+        {
+            StateObject stateObject = (StateObject) ar.AsyncState;
+            try
+            {
+                stateObject.NetStream.EndWrite(ar);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(DateTime.Now + ":" + client6002Address + ":6002 has disconnected");
+                SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", ex.Message);
+                sendingTo6002 = false;
+                stateObject.NetStream.Close();
+                stateObject.Client.Close();
+                //client6002t = null;
+                //stopEvent.Set();
+                //break;
+                client6002 = client6002t = tcpListener6002.AcceptTcpClient();
+                netStream6002 = client6002.GetStream();
+                if (netStream6002.CanWrite)
+                {
+                    //writeThread.Start();
+                    StateObject stateOO = new StateObject(client6002, netStream6002, stateObject.PackageBytes);
+                    IAsyncResult result = netStream6002.BeginWrite(stateObject.PackageBytes, 0, stateObject.PackageBytes.Length,
+                        new AsyncCallback(SendingTo6002Callback), stateOO);
+                    result.AsyncWaitHandle.WaitOne();
+                    //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
+                    sendingTo6002 = true;
+                }
+            }
         }
         static byte[] ByteCountBigEndian(int a)
         {
