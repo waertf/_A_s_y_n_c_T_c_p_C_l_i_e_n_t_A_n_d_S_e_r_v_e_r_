@@ -57,10 +57,12 @@ namespace AVLSServer
         static TcpClient client7000t, client6002t;
         static ManualResetEvent stopEvent = new ManualResetEvent(false);
         static bool port7000reset, port6002reset,port7000reconnect;
+        private static HandlerRoutine _ConsoleCtrlCheckDelegate;
         static void Main(string[] args)
         {
             Thread.Sleep(5000);
-            SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);//detect when console be closed
+            _ConsoleCtrlCheckDelegate=new HandlerRoutine(ConsoleCtrlCheck);
+            SetConsoleCtrlHandler(_ConsoleCtrlCheckDelegate, true);//detect when console be closed
             #region catchCloseEvent
             Thread catchCloseEvent = new System.Threading.Thread
               (delegate()
@@ -70,6 +72,7 @@ namespace AVLSServer
                   {
                       Thread.Sleep(1000);
                   }
+                  GC.KeepAlive(_ConsoleCtrlCheckDelegate); 
                   Environment.Exit(0);
 
               });
@@ -98,6 +101,9 @@ namespace AVLSServer
             tcpListener6002.Start();
             tcpListener7000.Start();
             Console.WriteLine(DateTime.Now+":"+"waiting for connect...");
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
             while (true)
             {
                 if (client7000t == null)
