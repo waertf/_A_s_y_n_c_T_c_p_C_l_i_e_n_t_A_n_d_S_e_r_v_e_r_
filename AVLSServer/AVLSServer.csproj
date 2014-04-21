@@ -71,7 +71,7 @@
   <ItemGroup>
     <Reference Include="ChilkatDotNet2, Version=9.5.0.0, Culture=neutral, PublicKeyToken=eb5fc1fc52ef09bd, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\ChilkatDotNet2-9.5.0-win32\ChilkatDotNet2-9.5.0-win32\ChilkatDotNet2.dll</HintPath>
+      <HintPath>ChilkatDotNet2-9.5.0-win32\ChilkatDotNet2.dll</HintPath>
     </Reference>
     <Reference Include="Gurock.SmartInspect, Version=3.3.4.102, Culture=neutral, PublicKeyToken=a78b0a9303ab7a7c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
