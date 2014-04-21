@@ -130,7 +130,7 @@ namespace AVLSServer
         {
             var exception = e.ExceptionObject as Exception;
             if (exception != null)
-                SiAuto.Main.LogError(exception.ToString());
+                SiAuto.Main.LogError("Restart",exception.ToString());
             //Environment.Exit(1);
             Restart();
         }
