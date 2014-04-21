@@ -83,7 +83,7 @@ namespace AVLSServer
             //Console.WriteLine(@"file(filename=""" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil\",rotate=weekly,append=true,maxparts=5,maxsize=500MB)");
             SiAuto.Si.Connections = @"file(filename=""" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil\",rotate=weekly,append=true,maxparts=5,maxsize=500MB)";
             SiAuto.Main.LogText(Level.Debug, "waiting for connect", "");
-            //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             port7000reconnect = true;
             if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
             {
@@ -130,8 +130,9 @@ namespace AVLSServer
         {
             var exception = e.ExceptionObject as Exception;
             if (exception != null)
-                SiAuto.Main.LogError("call restart:" + exception.ToString());
-            Restart();
+                SiAuto.Main.LogError(exception.ToString());
+            Environment.Exit(1);
+            //Restart();
         }
         static TcpClient client7000, client6002;
         static string client7000Address,client7000Port, client6002Address;
