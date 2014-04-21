@@ -131,8 +131,8 @@ namespace AVLSServer
             var exception = e.ExceptionObject as Exception;
             if (exception != null)
                 SiAuto.Main.LogError(exception.ToString());
-            Environment.Exit(1);
-            //Restart();
+            //Environment.Exit(1);
+            Restart();
         }
         static TcpClient client7000, client6002;
         static string client7000Address,client7000Port, client6002Address;
