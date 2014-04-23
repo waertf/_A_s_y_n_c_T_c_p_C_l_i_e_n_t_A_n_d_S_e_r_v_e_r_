@@ -69,8 +69,8 @@ namespace ConsoleApplication1AVSLPackageSender
                     string time = DateTime.UtcNow.ToString("yyMMddHHmmss");
                     string Speed = rand.Next(0, 1000).ToString();
                     string Dir = rand.Next(0, 360).ToString();
-                    //string uid = uidStrings[rand.Next(0, uidStrings.Length)];
-                    string uid = rand.Next(0, 1000).ToString();
+                    string uid = uidStrings[rand.Next(0, uidStrings.Length)];
+                    //string uid = rand.Next(0, 1000).ToString();
                     string gps = GPSValid[rand.Next(0, GPSValid.Length)];
                     string _event = Event[rand.Next(0, Event.Length)];
                     string loc = Loc[rand.Next(0, Loc.Length)];
