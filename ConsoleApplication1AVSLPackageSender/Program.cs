@@ -5,12 +5,15 @@ using System.Net.Sockets;
 using System.Text;
 using System.Configuration;
 using System.Threading;
+using System.IO;
 
 namespace ConsoleApplication1AVSLPackageSender
 {
     class Program
     {
-        static string[] uidStrings = new string[] { "900301", "912639", "912429", "913498", "912635" };
+        //static string[] uidStrings = new string[] { "900301", "912639", "912429", "913498", "912635" };
+	    //static string[] uidStrings = ConfigurationManager.AppSettings["UidList"].ToString().Split(new string[] {" ",",","\n", "\r\n" , "\t"}, StringSplitOptions.RemoveEmptyEntries);
+        static string[] uidStrings;
         static string[] GPSValid = new string[] { "L", "A" };
         const string Temp = "NA";
         const string Status = "00000000";
@@ -54,6 +57,18 @@ namespace ConsoleApplication1AVSLPackageSender
         static TcpClient avlsTcpClient;
         static void Main(string[] args)
         {
+            string path = Environment.CurrentDirectory+"\\"+"sd.equipment.txt";
+            if (File.Exists(path))
+            {
+                uidStrings = File.ReadAllLines(path);
+            }
+            else
+            {
+                Console.WriteLine("Cannot find file in path:" + path);
+                Console.WriteLine("Press any key to Exist...");
+                Console.ReadLine();
+                return;
+            }
             avlsTcpClient = new TcpClient(ConfigurationManager.AppSettings["ServerIP"], 7000);
             networkStream = avlsTcpClient.GetStream();
             Thread sendthread = new Thread(() => send(networkStream));
