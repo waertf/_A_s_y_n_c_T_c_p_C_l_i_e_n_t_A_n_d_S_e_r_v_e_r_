@@ -90,6 +90,9 @@ namespace ConsoleApplication1AVSLPackageSender
                     string gps = GPSValid[rand.Next(0, GPSValid.Length)];
                     string _event = Event[rand.Next(0, Event.Length)];
                     string loc = Loc[rand.Next(0, Loc.Length)];
+                    string lat_str = "121.5555", long_str = "23.6598";
+                    ConvertLocToAvlsLoc(ref lat_str, ref long_str);
+                    loc = "N" + lat_str + "E" + long_str + ",";
                     string message = Msg[rand.Next(0, Msg.Length)];
                     string package = "%%" + uid + "," +
                               gps + "," +
@@ -148,6 +151,17 @@ namespace ConsoleApplication1AVSLPackageSender
                 Thread sendthread = new Thread(() => send(networkStream));
                 sendthread.Start();
             }
+        }
+        private static void ConvertLocToAvlsLoc(ref string lat, ref string lon)
+        {
+            double tmpLat = double.Parse(lat);
+            double tmpLon = double.Parse(lon);
+            double latInt = Math.Truncate(tmpLat);
+            double lonInt = Math.Truncate(tmpLon);
+            double latNumberAfterPoint = tmpLat - latInt;
+            double lonNumberAfterPoint = tmpLon - lonInt;
+            lat = ((latNumberAfterPoint * 60 / 100 + latInt) * 100).ToString();
+            lon = ((lonNumberAfterPoint * 60 / 100 + lonInt) * 100).ToString();
         }
     }
 }
