@@ -17,7 +17,8 @@ namespace ConsoleApplication1AVSLPackageSender
         static string[] GPSValid = new string[] { "L", "A" };
         const string Temp = "NA";
         const string Status = "00000000";
-        static string[] Event = new[] { "181", "182", "175", "0", "-1", "150" };
+        //static string[] Event = new[] { "181", "182", "175", "0", "-1", "150" };
+        static string[] Event = new[] { "181", "175", "0", "150" };
         static string[] Loc = new[]
         {
             //24.69203 121.8355
@@ -124,7 +125,8 @@ namespace ConsoleApplication1AVSLPackageSender
                             sendthread.Start();
                         }
                     }
-                    Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sleepInMilliSeconds"]));
+                    //Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sleepInMilliSeconds"]));
+                    Thread.SpinWait(int.Parse(ConfigurationManager.AppSettings["sleepInSpinWait"]));
                 }
                 
             }
