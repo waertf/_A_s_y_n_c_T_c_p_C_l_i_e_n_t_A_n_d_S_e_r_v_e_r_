@@ -210,6 +210,7 @@ namespace AVLSServer
                 }
                 else
                 {
+                    SiAuto.Main.LogMessage("reload last packages from bin.xml and send to port 6002 again");
                     doc.LoadXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
                     for (int i = 0; i < doc.NumChildren - 1; i++)
                     {
