@@ -95,8 +95,8 @@ namespace ConsoleApplication1AVSLPackageSender
                 });
                 sendUidThread.Start();
             }
-            Console.WriteLine("press any key to exist...");
-            Console.ReadLine();
+            //Console.WriteLine("press any key to exist...");
+            //Console.ReadLine();
         }
 
         private static void SendByUid(string uid, NetworkStream networkStream)
