@@ -111,12 +111,14 @@ namespace ConsoleApplication1AVSLPackageSender
                     string lon = oneLineStrings[1];
                     string lat = oneLineStrings[2];
                     ConvertLocToAvlsLoc(ref lat, ref lon);
-                    string loc = "N" + lat + "E" + lon + ",";
+                    string loc = "N" + lat + "E" + lon ;
                     string time = DateTime.UtcNow.ToString("yyMMddHHmmss");
-                    string Speed = rand.Next(0, 1000).ToString();
+                    //string Speed = rand.Next(0, 1000).ToString();
+                    string Speed = ConfigurationManager.AppSettings["speed"];
                     string Dir = rand.Next(0, 360).ToString();
                     string gps = GPSValid[rand.Next(0, GPSValid.Length)];
-                    string _event = Event[rand.Next(0, Event.Length)];
+                    //string _event = Event[rand.Next(0, Event.Length)];
+                    string _event = Event[2];
                     string message = Msg[rand.Next(0, Msg.Length)];
                     string package = "%%" + uid + "," +
                               gps + "," +
@@ -172,7 +174,7 @@ namespace ConsoleApplication1AVSLPackageSender
                     string loc = Loc[rand.Next(0, Loc.Length)];
                     string lat_str = "121.5555", long_str = "23.6598";
                     ConvertLocToAvlsLoc(ref lat_str, ref long_str);
-                    loc = "N" + lat_str + "E" + long_str + ",";
+                    loc = "N" + lat_str + "E" + long_str ;
                     string message = Msg[rand.Next(0, Msg.Length)];
                     string package = "%%" + uid + "," +
                               gps + "," +
