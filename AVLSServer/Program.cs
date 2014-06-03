@@ -119,9 +119,11 @@ namespace AVLSServer
                 }
                 //Console.WriteLine(DateTime.Now+":"+"tcpListener6002.AcceptTcpClient");
                 stopEvent.Reset();
-                ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002t,client7000t));
+                Thread dealTheClienThread = new Thread(DealTheClient);
+                dealTheClienThread.Start(new Client(client6002t, client7000t));
+                //ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002t,client7000t));
                 stopEvent.WaitOne();
-                Thread.Sleep(1);
+                Thread.SpinWait(1);
             }
 
         }
@@ -586,9 +588,9 @@ namespace AVLSServer
                     //Console.WriteLine("-------------------------------------------");
                     //Console.WriteLine(BitConverter.ToString(packageSendTo6002));
                     //Console.WriteLine("-------------------------------------------");
-                    
-                    
-                    Thread.Sleep(1);
+
+
+                    Thread.SpinWait(1);
                 }
             }
             //Console.WriteLine(DateTime.Now+":"+"-DealTheClient");
