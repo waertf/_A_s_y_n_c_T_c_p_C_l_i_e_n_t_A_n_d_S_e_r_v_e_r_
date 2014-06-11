@@ -13,6 +13,9 @@ namespace RadarInfoDemo
     class Program
     {
         static string[] uidStrings;
+        static StringBuilder sb = null;
+        static object sbLock = new object();
+        static AutoResetEvent autoResetEvent = new AutoResetEvent(false);
         static void Main(string[] args)
         {
             SiAuto.Si.Enabled = true;
@@ -46,57 +49,74 @@ namespace RadarInfoDemo
             #endregion
             */
             uidStrings = GetAllFilesCSV(Environment.CurrentDirectory).ToArray();
-            for (int i = 0; i < uidStrings.Length; i++)
+            sb = new StringBuilder();
+            for (int j = 0; j < 260; j++)//get 260 loc
             {
-                int i1 = i;
-                /*
-                var workToDo = new WaitCallback(o =>
-                  {
-                    // Your stuff here
-                      SendByUid(uidStrings[i1], networkStream);
-                  });
-                ThreadPool.QueueUserWorkItem(workToDo);
-                */
-                Thread sendUidThread = new Thread(delegate()
+                Thread sendUidThread = null;
+                for (int i = 0; i < uidStrings.Length; i++)
                 {
-                    SendByUid(uidStrings[i1]);
-                });
-                sendUidThread.Start();
-            }
+                    int i1 = i;
+                    /*
+                    var workToDo = new WaitCallback(o =>
+                      {
+                        // Your stuff here
+                          SendByUid(uidStrings[i1], networkStream);
+                      });
+                    ThreadPool.QueueUserWorkItem(workToDo);
+                    */
+                    sendUidThread = new Thread(delegate()
+                    {
+                        SendByUid(uidStrings[i1]);
+                    });
+                    sendUidThread.Start();
+                    autoResetEvent.Set();
+                }
+                Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
+                SqlClient sql_client = new SqlClient(
+                 ConfigurationManager.AppSettings["SQL_SERVER_IP"],
+                 ConfigurationManager.AppSettings["SQL_SERVER_PORT"],
+                 ConfigurationManager.AppSettings["SQL_SERVER_USER_ID"],
+                 ConfigurationManager.AppSettings["SQL_SERVER_PASSWORD"],
+                 ConfigurationManager.AppSettings["SQL_SERVER_DATABASE"],
+                 ConfigurationManager.AppSettings["Pooling"],
+                 ConfigurationManager.AppSettings["MinPoolSize"],
+                 ConfigurationManager.AppSettings["MaxPoolSize"],
+                 ConfigurationManager.AppSettings["ConnectionLifetime"]);
+                sql_client.connect();
+                sql_client.modify(sb.ToString());
+                sb = null;
+                sb = new StringBuilder();
+                sql_client.disconnect();
+                
+                sql_client.Dispose();
+                sql_client = null;
+                
+                }
+            
         }
 
         private static void SendByUid(string uid)
         {
-            SqlClient sql_client = new SqlClient(
-                ConfigurationManager.AppSettings["SQL_SERVER_IP"],
-                ConfigurationManager.AppSettings["SQL_SERVER_PORT"],
-                ConfigurationManager.AppSettings["SQL_SERVER_USER_ID"],
-                ConfigurationManager.AppSettings["SQL_SERVER_PASSWORD"],
-                ConfigurationManager.AppSettings["SQL_SERVER_DATABASE"],
-                ConfigurationManager.AppSettings["Pooling"],
-                ConfigurationManager.AppSettings["MinPoolSize"],
-                ConfigurationManager.AppSettings["MaxPoolSize"],
-                ConfigurationManager.AppSettings["ConnectionLifetime"]);
-            sql_client.connect();
+           
             string path = Environment.CurrentDirectory + "\\" + uid + ".csv";
             using (StreamReader sr = new StreamReader(path))
             {
-                while (sr.Peek() >= 0)
+                if (sr.Peek() >= 0)
                 {
                     string[] oneLineStrings = sr.ReadLine().Split(new char[] { ',' });
                     string lon = oneLineStrings[1];
                     string lat = oneLineStrings[2];
                     string cmd = @"INSERT INTO ""UidAndLoc""(
             uid, lat, lon)
-    VALUES ("+uid+","+lat+","+lon+")";
-                    sql_client.modify(cmd);
-                    Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
+    VALUES ("+uid+","+lat+","+lon+");";
+                    lock (sbLock)
+                    {
+                        sb.Append(cmd);
+                    }
+                   // Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
                 }
             }
-            sql_client.disconnect();
-
-            sql_client.Dispose();
-            sql_client = null;
+            autoResetEvent.WaitOne();
         }
         static List<String> GetAllFilesCSV(String directory)
         {
