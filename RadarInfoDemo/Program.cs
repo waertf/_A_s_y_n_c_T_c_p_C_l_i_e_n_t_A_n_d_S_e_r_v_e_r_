@@ -69,7 +69,7 @@ namespace RadarInfoDemo
                         SendByUid(uidStrings[i1]);
                     });
                     sendUidThread.Start();
-                    //autoResetEvent.Set();
+                    autoResetEvent.Set();
                 }
                 Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
                 SqlClient sql_client = new SqlClient(
@@ -116,7 +116,7 @@ namespace RadarInfoDemo
                    // Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
                 }
             }
-            //autoResetEvent.WaitOne();
+            autoResetEvent.WaitOne();
         }
         static List<String> GetAllFilesCSV(String directory)
         {
