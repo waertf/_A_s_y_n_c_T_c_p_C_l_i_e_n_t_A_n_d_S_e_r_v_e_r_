@@ -124,7 +124,12 @@ namespace RadarInfoDemo
     VALUES ("+uid+","+lat+","+lon+");";
                     lock (sbLock)
                     {
-                        sb.Append(cmd);
+                        while (sb!=null)
+                        {
+                            sb.Append(cmd);
+                            break;
+                        }
+                        
                     }
                    // Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
                 }
