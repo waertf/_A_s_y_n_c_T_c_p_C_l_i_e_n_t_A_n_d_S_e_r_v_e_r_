@@ -16,6 +16,7 @@ namespace RadarInfoDemo
         static StringBuilder sb = null;
         static object sbLock = new object();
         static AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+        static Queue<StringBuilder> sbQueue = new Queue<StringBuilder>(); 
         static void Main(string[] args)
         {
             SiAuto.Si.Enabled = true;
@@ -48,6 +49,34 @@ namespace RadarInfoDemo
             sql_client = null;
             #endregion
             */
+            {
+                var sbTimer = new System.Timers.Timer(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
+                sbTimer.Elapsed += (sender, e) =>
+                {
+                    if (sbQueue.Count > 0)
+                    {
+                        //Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
+                        SqlClient sql_client = new SqlClient(
+                         ConfigurationManager.AppSettings["SQL_SERVER_IP"],
+                         ConfigurationManager.AppSettings["SQL_SERVER_PORT"],
+                         ConfigurationManager.AppSettings["SQL_SERVER_USER_ID"],
+                         ConfigurationManager.AppSettings["SQL_SERVER_PASSWORD"],
+                         ConfigurationManager.AppSettings["SQL_SERVER_DATABASE"],
+                         ConfigurationManager.AppSettings["Pooling"],
+                         ConfigurationManager.AppSettings["MinPoolSize"],
+                         ConfigurationManager.AppSettings["MaxPoolSize"],
+                         ConfigurationManager.AppSettings["ConnectionLifetime"]);
+                        sql_client.connect();
+                        sql_client.modify(sbQueue.Dequeue().ToString());
+                        
+                        sql_client.disconnect();
+
+                        sql_client.Dispose();
+                        sql_client = null;
+                    }
+                };
+                sbTimer.Enabled = true;
+            }
             uidStrings = GetAllFilesCSV(Environment.CurrentDirectory).ToArray();
             sb = new StringBuilder();
             for (int j = 0; j < 260; j++)//get 260 loc
@@ -72,28 +101,11 @@ namespace RadarInfoDemo
                     //autoResetEvent.Set();
                 }
                 sendUidThread.Join();
-                Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
-                SqlClient sql_client = new SqlClient(
-                 ConfigurationManager.AppSettings["SQL_SERVER_IP"],
-                 ConfigurationManager.AppSettings["SQL_SERVER_PORT"],
-                 ConfigurationManager.AppSettings["SQL_SERVER_USER_ID"],
-                 ConfigurationManager.AppSettings["SQL_SERVER_PASSWORD"],
-                 ConfigurationManager.AppSettings["SQL_SERVER_DATABASE"],
-                 ConfigurationManager.AppSettings["Pooling"],
-                 ConfigurationManager.AppSettings["MinPoolSize"],
-                 ConfigurationManager.AppSettings["MaxPoolSize"],
-                 ConfigurationManager.AppSettings["ConnectionLifetime"]);
-                sql_client.connect();
-                sql_client.modify(sb.ToString());
+                sbQueue.Enqueue(sb);
                 sb = null;
                 sb = new StringBuilder();
-                sql_client.disconnect();
-                
-                sql_client.Dispose();
-                sql_client = null;
-                
                 }
-            
+            Console.ReadLine();
         }
 
         private static void SendByUid(string uid)
