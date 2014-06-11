@@ -90,12 +90,12 @@ namespace RadarInfoDemo
                 if (pgSqlConnection != null && IsConnected)
                 {
                     //insert
-                    command = pgSqlConnection.CreateCommand();
-                    command.CommandText = cmd;
+                    //command = pgSqlConnection.CreateCommand();
+                    //command.CommandText = cmd;
                     //cmd.CommandText = "INSERT INTO public.test (id) VALUES (1)";
-                    //pgSqlConnection.BeginTransaction();
+                    pgSqlConnection.BeginTransaction();
                     //async
-                    IAsyncResult cres = command.BeginExecuteNonQuery(null, null);
+                    //IAsyncResult cres = command.BeginExecuteNonQuery(null, null);
                     //Console.Write("In progress...");
                     //while (!cres.IsCompleted)
                     {
@@ -108,7 +108,7 @@ namespace RadarInfoDemo
                     else
                         Console.WriteLine("Have to wait for operation to complete...");
                     */
-                    int RowsAffected = command.EndExecuteNonQuery(cres);
+                    //int RowsAffected = command.EndExecuteNonQuery(cres);
                     //Console.WriteLine("Done. Rows affected: " + RowsAffected.ToString());
                     /*
                      //sync
@@ -117,6 +117,9 @@ namespace RadarInfoDemo
                      * 
                      */
                     //pgSqlConnection.Commit();
+                    PgSqlScript pgSqlScript = new PgSqlScript(cmd,pgSqlConnection);
+                    pgSqlScript.Execute();
+                    pgSqlConnection.Commit();
                     ThreadPool.QueueUserWorkItem(callback =>
                     {
                         Console.ForegroundColor = ConsoleColor.Cyan;
