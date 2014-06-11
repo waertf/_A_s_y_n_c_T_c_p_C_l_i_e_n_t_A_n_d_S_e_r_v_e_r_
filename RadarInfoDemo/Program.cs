@@ -71,8 +71,8 @@ namespace RadarInfoDemo
                     sendUidThread.Start();
                     //autoResetEvent.Set();
                 }
-                sendUidThread.Join(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
-                //Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
+                sendUidThread.Join();
+                Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
                 SqlClient sql_client = new SqlClient(
                  ConfigurationManager.AppSettings["SQL_SERVER_IP"],
                  ConfigurationManager.AppSettings["SQL_SERVER_PORT"],
