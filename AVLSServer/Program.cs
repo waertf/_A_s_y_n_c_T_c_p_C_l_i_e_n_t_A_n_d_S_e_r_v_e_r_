@@ -242,9 +242,9 @@ namespace AVLSServer
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
-                            //client6002t = null;
-                            //stopEvent.Set();
-                            //break;
+                            client6002t = null;
+                            stopEvent.Set();
+                            break;
                             client6002 = client6002t= tcpListener6002.AcceptTcpClient();
                             netStream6002 = client6002.GetStream();
                             if (netStream6002.CanWrite)
@@ -561,9 +561,9 @@ namespace AVLSServer
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
-                            //client6002t = null;
-                            //stopEvent.Set();
-                            //break;
+                            client6002t = null;
+                            stopEvent.Set();
+                            break;
                             client6002 = client6002t=tcpListener6002.AcceptTcpClient();
                             netStream6002 = client6002.GetStream();
                             if (netStream6002.CanWrite)
