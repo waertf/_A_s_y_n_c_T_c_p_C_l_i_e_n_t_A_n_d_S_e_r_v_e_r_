@@ -58,9 +58,12 @@ namespace AVLSServer
         static ManualResetEvent stopEvent = new ManualResetEvent(false);
         static bool port7000reset, port6002reset,port7000reconnect;
         private static HandlerRoutine _ConsoleCtrlCheckDelegate;
+        static Mutex _mutex = new Mutex(false, "avlsServer.exe");
         static void Main(string[] args)
         {
-            Thread.Sleep(5000);
+            if (!_mutex.WaitOne(1000, false))
+                return;
+            //Thread.Sleep(5000);
             _ConsoleCtrlCheckDelegate=new HandlerRoutine(ConsoleCtrlCheck);
             SetConsoleCtrlHandler(_ConsoleCtrlCheckDelegate, true);//detect when console be closed
             #region catchCloseEvent
@@ -84,6 +87,7 @@ namespace AVLSServer
             SiAuto.Si.Connections = @"file(filename=""" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log.sil\",rotate=weekly,append=true,maxparts=5,maxsize=500MB)";
             SiAuto.Main.LogText(Level.Debug, "waiting for connect", "");
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             port7000reconnect = true;
             if (bool.Parse(ConfigurationManager.AppSettings["manualIP"]))
             {
@@ -128,13 +132,23 @@ namespace AVLSServer
 
         }
 
+        static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            string logMsg = string.Empty;
+            logMsg = "Close time:" + DateTime.Now.ToString("G") + Environment.NewLine +
+                  "Memory usage:" +
+                  Process.GetCurrentProcess().WorkingSet64 / 1024.0 / 1024.0;
+            SiAuto.Main.LogError(logMsg);
+            _mutex.ReleaseMutex();
+        }
+
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = e.ExceptionObject as Exception;
             if (exception != null)
                 SiAuto.Main.LogError("Restart:"+exception.ToString());
-            //Environment.Exit(1);
-            Restart();
+            Environment.Exit(1);
+            //Restart();
         }
         static TcpClient client7000, client6002;
         static string client7000Address,client7000Port, client6002Address;
