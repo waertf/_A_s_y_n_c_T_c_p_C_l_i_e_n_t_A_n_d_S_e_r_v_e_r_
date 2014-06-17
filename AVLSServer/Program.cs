@@ -246,13 +246,14 @@ namespace AVLSServer
                                 result.AsyncWaitHandle.WaitOne();
                                 //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
                                 sendingTo6002 = true;
+                                Console.WriteLine("reload#"+i+":"+DateTime.Now);
                             }
                             
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002 has disconnected");
-                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", ex.Message);
+                            Console.WriteLine(DateTime.Now+":"+client6002Address + ":6002-1 has disconnected");
+                            SiAuto.Main.LogText(Level.Debug, "6002-1 has disconnected", ex.Message);
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
@@ -276,6 +277,7 @@ namespace AVLSServer
                             //netStream6002.Flush();
 
                     }
+                    Console.WriteLine("reload END");
                 }
                 #endregion resend package to 6002 from bin.xml
                 SiAuto.Main.LogText(Level.Debug, "send package from xml to 6002", client6002Address);
@@ -570,8 +572,8 @@ namespace AVLSServer
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(DateTime.Now + ":" + client6002Address + ":6002 has disconnected");
-                            SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", ex.Message);
+                            Console.WriteLine(DateTime.Now + ":" + client6002Address + ":6002-2 has disconnected");
+                            SiAuto.Main.LogText(Level.Debug, "6002-2 has disconnected", ex.Message);
                             sendingTo6002 = false;
                             netStream6002.Close();
                             client6002.Close();
@@ -620,8 +622,8 @@ namespace AVLSServer
             catch (Exception ex)
             {
 
-                Console.WriteLine(DateTime.Now + ":" + client6002Address + ":6002 has disconnected");
-                SiAuto.Main.LogText(Level.Debug, "6002 has disconnected", ex.Message);
+                Console.WriteLine(DateTime.Now + ":" + client6002Address + ":6002-3 has disconnected");
+                SiAuto.Main.LogText(Level.Debug, "6002-3 has disconnected", ex.Message);
                 sendingTo6002 = false;
                 stateObject.NetStream.Close();
                 stateObject.Client.Close();
