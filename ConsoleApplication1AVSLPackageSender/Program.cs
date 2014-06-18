@@ -75,8 +75,8 @@ namespace ConsoleApplication1AVSLPackageSender
             uidStrings = GetAllFilesCSV(Environment.CurrentDirectory).ToArray();
             avlsTcpClient = new TcpClient(ConfigurationManager.AppSettings["ServerIP"], 7000);
             networkStream = avlsTcpClient.GetStream();
-            //Thread sendthread = new Thread(() => send(networkStream));
-            //sendthread.Start();
+            Thread sendthread = new Thread(() => send(networkStream));
+            sendthread.Start();
 
             for (int i = 0; i < uidStrings.Length; i++)
             {
@@ -93,7 +93,7 @@ namespace ConsoleApplication1AVSLPackageSender
                 {
                     SendByUid(uidStrings[i1], networkStream);
                 });
-                sendUidThread.Start();
+                //sendUidThread.Start();
             }
             //Console.WriteLine("press any key to exist...");
             //Console.ReadLine();
@@ -172,7 +172,7 @@ namespace ConsoleApplication1AVSLPackageSender
                     string gps = GPSValid[rand.Next(0, GPSValid.Length)];
                     string _event = Event[rand.Next(0, Event.Length)];
                     string loc = Loc[rand.Next(0, Loc.Length)];
-                    string lat_str = "121.5555", long_str = "23.6598";
+                    string long_str = "121.5555", lat_str = "23.6598";
                     ConvertLocToAvlsLoc(ref lat_str, ref long_str);
                     loc = "N" + lat_str + "E" + long_str ;
                     string message = Msg[rand.Next(0, Msg.Length)];
@@ -210,8 +210,8 @@ namespace ConsoleApplication1AVSLPackageSender
                             sendthread.Start();
                         }
                     }
-                    //Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sleepInMilliSeconds"]));
-                    Thread.SpinWait(int.Parse(ConfigurationManager.AppSettings["sleepInSpinWait"]));
+                    Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["sendSleepTime"]));
+                    //Thread.SpinWait(int.Parse(ConfigurationManager.AppSettings["sleepInSpinWait"]));
                 }
                 
             }
