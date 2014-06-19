@@ -228,8 +228,8 @@ namespace AVLSServer
                 {
                     Console.WriteLine("reload last packages from bin.xml and send to port 6002 again");
                     SiAuto.Main.LogMessage("reload last packages from bin.xml and send to port 6002 again");
-                    doc.LoadXml(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bin.xml");
-                    for (int i = 0; i < doc.NumChildren - 1; i++)
+                    bool success =doc.LoadXmlFile(Environment.CurrentDirectory + "\\bin.xml");
+                    for (int i = 0; i < doc.NumChildren; i++)
                     {
                         byte[] packageSendTo6002 = HexToByte(doc.GetChildContentByIndex(i));
                         try
@@ -247,6 +247,10 @@ namespace AVLSServer
                                 //netStream6002.Write(packageSendTo6002, 0, packageSendTo6002.Length);
                                 sendingTo6002 = true;
                                 Console.WriteLine("reload#"+i+":"+DateTime.Now);
+                            }
+                            else
+                            {
+                                Console.WriteLine("netStream6002.CanWrite is false");
                             }
                             
                         }
