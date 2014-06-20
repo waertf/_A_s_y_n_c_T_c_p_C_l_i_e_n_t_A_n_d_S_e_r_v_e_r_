@@ -332,6 +332,8 @@ namespace AVLSServer
                     string[] receiveStrings = message.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
                     int counter = 0;
                     UNITReportPacket recvReportPacket = new UNITReportPacket();
+                    string thisYear = null;
+                    thisYear = DateTime.Now.Year.ToString().Substring(0,2);
                     foreach (var receiveString in receiveStrings)
                     {
                         
@@ -345,7 +347,9 @@ namespace AVLSServer
                                 recvReportPacket.GPSValid = receiveString;
                                 break;
                             case 2:
-                                recvReportPacket.DateTime = "20"+receiveString;
+                                string myYear = null;
+                                myYear = thisYear + receiveString;
+                                recvReportPacket.DateTime = myYear;
                                 break;
                             case 3:
                                 recvReportPacket.Loc = receiveString;
