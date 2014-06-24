@@ -127,7 +127,7 @@ namespace AVLSServer
                 dealTheClienThread.Start(new Client(client6002t, client7000t));
                 //ThreadPool.QueueUserWorkItem(DealTheClient, new Client(client6002t,client7000t));
                 stopEvent.WaitOne();
-                Thread.SpinWait(1);
+                //Thread.SpinWait(1);
             }
 
         }
@@ -614,7 +614,7 @@ namespace AVLSServer
                     //Console.WriteLine("-------------------------------------------");
 
 
-                    Thread.SpinWait(1);
+                    //Thread.SpinWait(1);
                 }
             }
             //Console.WriteLine(DateTime.Now+":"+"-DealTheClient");
