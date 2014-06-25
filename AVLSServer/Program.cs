@@ -297,7 +297,7 @@ namespace AVLSServer
                 int idCounter = 0;
                 while (true)
                 {
-                    string message;
+                    string message=null;
                     try
                     {
                         message = reader.ReadLine();
