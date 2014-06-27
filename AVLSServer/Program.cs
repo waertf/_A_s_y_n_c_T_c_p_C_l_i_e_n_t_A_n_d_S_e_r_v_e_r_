@@ -263,7 +263,8 @@ namespace AVLSServer
                             client6002.Close();
                             client6002t = null;
                             stopEvent.Set();
-                            break;
+                            //break;
+                            return;
                             client6002 = client6002t= tcpListener6002.AcceptTcpClient();
                             netStream6002 = client6002.GetStream();
                             if (netStream6002.CanWrite)
