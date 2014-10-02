@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication2Tcp", "ConsoleApplication2Tcp\ConsoleApplication2Tcp.csproj", "{6F3C8A76-4ADA-4B6E-929D-3FC7650D6777}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "keeplive", "keeplive\keeplive.csproj", "{74AF2FDA-7AAE-445B-8741-3C08BFE4EED1}"
